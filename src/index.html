@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ALAG</title>
+<style>
+:root {
+  color-scheme: light;
+  --surface: #fcfcfb; --panel: #f4f3f0; --line: #e3e2dd; --grid: #ecebe7;
+  --text: #0b0b0b; --text-2: #52514e; --text-3: #6f6e69; --accent: #2a78d6;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100;
+  --s5:#e87ba4; --s6:#008300; --s7:#6250d6; --s8:#e34948;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --surface: #1a1a19; --panel: #222221; --line: #363633; --grid: #2c2c2a;
+    --text: #f0efec; --text-2: #c3c2b7; --text-3: #9c9b92; --accent: #3987e5;
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500;
+    --s5:#d55181; --s6:#008300; --s7:#9085e9; --s8:#e66767;
+  }
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body {
+  display: grid; grid-template-columns: 280px minmax(0, 1fr);
+  background: var(--surface); color: var(--text);
+  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+button, input, select { font: inherit; color: inherit; }
+#panel {
+  display: flex; flex-direction: column; height: 100vh; min-height: 0;
+  background: var(--panel); border-right: 1px solid var(--line);
+}
+#panel header { padding: 14px 14px 10px; }
+#panel h1 { margin: 0 0 10px; font-size: 16px; letter-spacing: .04em; }
+#filter {
+  width: 100%; padding: 6px 8px; border: 1px solid var(--line);
+  border-radius: 6px; background: var(--surface);
+}
+#tree { flex: 1; overflow-y: auto; padding: 0 6px 12px; }
+.group { margin-top: 6px; }
+.row {
+  display: flex; align-items: center; gap: 8px; padding: 4px 8px;
+  border-radius: 6px; cursor: pointer; min-width: 0;
+}
+.row:hover { background: var(--line); }
+.row input { margin: 0; flex: none; accent-color: var(--accent); }
+.row .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.group > .row { font-weight: 600; }
+.group > .row .count { color: var(--text-3); font-weight: 400; font-size: 12px; }
+.exp { margin-left: 14px; }
+.key { flex: none; width: 16px; height: 0; border-top: 2px solid transparent; }
+.live {
+  flex: none; font-size: 11px; color: var(--text-2);
+  border: 1px solid var(--line); border-radius: 4px; padding: 0 4px;
+}
+#main { height: 100vh; overflow-y: auto; min-width: 0; }
+#bar {
+  position: sticky; top: 0; z-index: 2; background: var(--surface);
+  border-bottom: 1px solid var(--line); padding: 8px 16px;
+}
+#controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; }
+#tabs { display: flex; gap: 2px; }
+#tabs button {
+  border: 0; background: none; padding: 5px 10px; border-radius: 6px;
+  cursor: pointer; color: var(--text-2);
+}
+#tabs button[aria-selected="true"] { background: var(--panel); color: var(--text); font-weight: 600; }
+.control { display: flex; align-items: center; gap: 6px; color: var(--text-2); font-size: 13px; }
+.control input[type=range] { width: 100px; accent-color: var(--accent); }
+.control select { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 2px 4px; }
+#reset { border: 1px solid var(--line); background: none; border-radius: 6px; padding: 2px 8px; cursor: pointer; color: var(--text-2); font-size: 13px; }
+#legend { display: flex; flex-wrap: wrap; gap: 2px 14px; margin-top: 6px; font-size: 13px; color: var(--text-2); }
+#legend:empty { display: none; }
+#legend span { display: inline-flex; align-items: center; gap: 6px; }
+#content { padding: 12px 16px 40px; }
+.empty { color: var(--text-2); padding: 48px 8px; text-align: center; }
+h2 { font-size: 13px; color: var(--text-2); margin: 18px 0 8px; font-weight: 600; }
+h2:first-child { margin-top: 4px; }
+.charts { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 12px; }
+.chart { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px 4px; min-width: 0; }
+.chart h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+.chart canvas { display: block; width: 100%; height: 230px; cursor: crosshair; touch-action: none; }
+#tip {
+  position: fixed; z-index: 5; display: none; pointer-events: none;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+  box-shadow: 0 4px 16px #0003; padding: 6px 10px; font-size: 12px; max-width: 340px;
+}
+#tip .head { color: var(--text-2); margin-bottom: 3px; }
+#tip .tiprow { display: flex; align-items: center; gap: 8px; }
+#tip strong { font-variant-numeric: tabular-nums; min-width: 64px; }
+#tip .label { color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.images { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+figure { margin: 0; border: 1px solid var(--line); border-radius: 8px; padding: 8px; min-width: 0; }
+figure img { display: block; width: 100%; height: auto; border-radius: 4px; background: #fff; }
+figcaption { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-2); margin-bottom: 6px; overflow-wrap: anywhere; }
+.scrub { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: var(--text-2); font-size: 13px; }
+.scrub input { flex: 1; max-width: 420px; accent-color: var(--accent); }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 13px; }
+th, td { border-bottom: 1px solid var(--line); padding: 5px 14px 5px 0; text-align: left; white-space: nowrap; }
+th { font-weight: 600; color: var(--text-2); }
+td.num { font-variant-numeric: tabular-nums; }
+tr.differs td:first-child { font-weight: 600; }
+tbody th { font-weight: 400; color: var(--text); }
+@media (max-width: 760px) {
+  body { grid-template-columns: minmax(0, 1fr); grid-template-rows: 38vh minmax(0, 1fr); height: 100vh; }
+  #panel, #main { height: auto; }
+  #panel { border-right: 0; border-bottom: 1px solid var(--line); }
+  .charts { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+</head>
+<body>
+<aside id="panel">
+  <header>
+    <h1>ALAG</h1>
+    <input id="filter" type="search" placeholder="Filter experiments" aria-label="Filter experiments">
+  </header>
+  <div id="tree"></div>
+</aside>
+<main id="main">
+  <div id="bar">
+    <div id="controls">
+      <div id="tabs" role="tablist">
+        <button role="tab" data-tab="charts" aria-selected="true">Charts</button>
+        <button role="tab" data-tab="images" aria-selected="false">Images</button>
+        <button role="tab" data-tab="table" aria-selected="false">Table</button>
+      </div>
+      <label class="control">Smoothing <input id="smooth" type="range" min="0" max="0.99" step="0.01" value="0"><span id="smoothval">0</span></label>
+      <label class="control">X axis <select id="xaxis"><option value="step">Step</option><option value="time">Time</option></select></label>
+      <label class="control"><input id="logy" type="checkbox"> Log Y</label>
+      <button id="reset" hidden>Reset zoom</button>
+    </div>
+    <div id="legend"></div>
+  </div>
+  <div id="content"></div>
+</main>
+<div id="tip"></div>
+<script>
+"use strict";
+const POLL_MS = 2000;
+const LIVE_SECONDS = 15;
+const SLOTS = 8;
+const DASHES = [[], [7, 4], [2, 3]];   // past 8 experiments, hues repeat with a new dash
+const $ = id => document.getElementById(id);
+const el = (tag, className, text) => {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+};
+const load = (key, fallback) => {
+  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
+};
+const save = (key, value) => {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
+};
+
+const state = {
+  tree: { root: "", groups: [] },
+  selected: new Map(load("alag.selected", []).map(([id, slot]) => [id, slot])),
+  hadSaved: load("alag.selected", null) !== null,
+  collapsed: new Set(load("alag.collapsed", [])),
+  tab: "charts", filter: "", smooth: 0, xaxis: "step", logy: false,
+  zoom: null, imageStep: null,
+};
+const experiments = new Map();   // id -> loaded data
+const charts = new Map();        // metric -> {canvas, ...}
+const idOf = (g, e) => g + "/" + e;
+
+function experiment(g, e) {
+  const id = idOf(g, e);
+  if (!experiments.has(id)) {
+    experiments.set(id, { id, g, e, offset: 0, series: new Map(), start: null, config: null, images: [], size: 0 });
+  }
+  return experiments.get(id);
+}
+
+/* ---------- colours ---------- */
+let palette = [];
+let ink = {};
+function readTheme() {
+  const css = getComputedStyle(document.documentElement);
+  palette = Array.from({ length: SLOTS }, (_, i) => css.getPropertyValue("--s" + (i + 1)).trim());
+  for (const name of ["surface", "line", "grid", "text", "text-2", "text-3"]) ink[name] = css.getPropertyValue("--" + name).trim();
+}
+const colorOf = slot => palette[slot % SLOTS];
+const dashOf = slot => DASHES[Math.floor(slot / SLOTS) % DASHES.length];
+function lineKey(slot) {
+  const key = el("i", "key");
+  key.style.borderTopColor = colorOf(slot);
+  key.style.borderTopStyle = dashOf(slot).length ? "dashed" : "solid";
+  return key;
+}
+function freeSlot() {
+  const used = new Set(state.selected.values());
+  let slot = 0;
+  while (used.has(slot)) slot++;
+  return slot;
+}
+
+/* ---------- selection ---------- */
+function setSelected(id, on) {
+  if (on && !state.selected.has(id)) state.selected.set(id, freeSlot());
+  if (!on) state.selected.delete(id);
+  save("alag.selected", [...state.selected]);
+}
+function selectedExperiments() {
+  const list = [];
+  for (const group of state.tree.groups) {
+    for (const item of group.experiments) {
+      const id = idOf(group.name, item.name);
+      if (state.selected.has(id)) list.push({ exp: experiment(group.name, item.name), slot: state.selected.get(id) });
+    }
+  }
+  return list.sort((a, b) => a.slot - b.slot);
+}
+const labelOf = exp => {
+  const clash = state.tree.groups.filter(g => g.experiments.some(e => e.name === exp.e)).length > 1;
+  return clash ? exp.id : exp.e;
+};
+
+/* ---------- left panel ---------- */
+function renderTree() {
+  const tree = $("tree");
+  const scroll = tree.scrollTop;
+  tree.replaceChildren();
+  const needle = state.filter.toLowerCase();
+  if (!state.tree.groups.length) {
+    tree.append(el("div", "empty", "No experiments in " + state.tree.root));
+    return;
+  }
+  for (const group of state.tree.groups) {
+    const shown = group.experiments.filter(e => (group.name + "/" + e.name).toLowerCase().includes(needle));
+    if (!shown.length) continue;
+    const box = el("div", "group");
+    const ids = shown.map(e => idOf(group.name, e.name));
+    const on = ids.filter(id => state.selected.has(id)).length;
+
+    const head = el("label", "row");
+    const all = el("input");
+    all.type = "checkbox";
+    all.checked = on === ids.length;
+    all.indeterminate = on > 0 && on < ids.length;
+    all.setAttribute("aria-label", "Select all in " + group.name);
+    all.onchange = () => { ids.forEach(id => setSelected(id, all.checked)); refresh(); };
+    const name = el("span", "name", group.name);
+    name.title = group.name;
+    const fold = state.collapsed.has(group.name);
+    const count = el("span", "count", (fold ? "▸ " : "▾ ") + group.experiments.length);
+    count.onclick = event => {
+      event.preventDefault();
+      fold ? state.collapsed.delete(group.name) : state.collapsed.add(group.name);
+      save("alag.collapsed", [...state.collapsed]);
+      renderTree();
+    };
+    head.append(all, name, count);
+    box.append(head);
+
+    if (!fold || needle) {
+      for (const item of shown) {
+        const id = idOf(group.name, item.name);
+        const row = el("label", "row exp");
+        const check = el("input");
+        check.type = "checkbox";
+        check.checked = state.selected.has(id);
+        check.onchange = () => { setSelected(id, check.checked); refresh(); };
+        const label = el("span", "name", item.name);
+        label.title = item.name;
+        row.append(check, label);
+        if (item.age < LIVE_SECONDS) row.append(el("span", "live", "live"));
+        if (state.selected.has(id)) row.append(lineKey(state.selected.get(id)));
+        box.append(row);
+      }
+    }
+    tree.append(box);
+  }
+  tree.scrollTop = scroll;
+}
+
+function renderLegend() {
+  const legend = $("legend");
+  legend.replaceChildren();
+  const list = selectedExperiments();
+  if (list.length < 2) return;
+  for (const { exp, slot } of list) {
+    const item = el("span");
+    item.append(lineKey(slot), document.createTextNode(labelOf(exp)));
+    legend.append(item);
+  }
+}
+
+/* ---------- data ---------- */
+function parseLine(line) {
+  if (!line.includes('"')) return line.split(",");
+  const out = [];
+  let field = "", quoted = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (quoted) {
+      if (c !== '"') field += c;
+      else if (line[i + 1] === '"') { field += '"'; i++; }
+      else quoted = false;
+    } else if (c === '"') quoted = true;
+    else if (c === ",") { out.push(field); field = ""; }
+    else field += c;
+  }
+  out.push(field);
+  return out;
+}
+function addRows(exp, text) {
+  for (const line of text.split("\n")) {
+    if (!line || line.startsWith("step,time,")) continue;
+    const [step, time, metric, value] = parseLine(line);
+    const t = +time;
+    if (exp.start === null) exp.start = t;
+    let series = exp.series.get(metric);
+    if (!series) exp.series.set(metric, series = { step: [], time: [], y: [] });
+    series.step.push(+step);
+    series.time.push(t - exp.start);
+    series.y.push(parseFloat(value));   // "nan" and "inf" become gaps in the line
+  }
+}
+const query = exp => "g=" + encodeURIComponent(exp.g) + "&e=" + encodeURIComponent(exp.e);
+async function fetchMetrics(exp) {
+  let changed = false;
+  while (exp.offset < exp.size) {
+    const response = await fetch("/api/metrics?" + query(exp) + "&offset=" + exp.offset);
+    if (!response.ok) break;
+    const bytes = await response.arrayBuffer();
+    if (!bytes.byteLength) break;     // only a half-written line so far
+    exp.offset += bytes.byteLength;
+    addRows(exp, new TextDecoder().decode(bytes));
+    changed = true;
+  }
+  return changed;
+}
+async function fetchExtras(exp) {
+  let changed = false;
+  if (exp.config === null) {
+    const response = await fetch("/api/config?" + query(exp));
+    exp.config = response.ok ? await response.json().catch(() => ({})) : {};
+    changed = true;
+  }
+  if (state.tab === "images") {
+    const response = await fetch("/api/images?" + query(exp));
+    if (response.ok) {
+      const images = await response.json();
+      if (images.length !== exp.images.length) { exp.images = images; changed = true; }
+    }
+  }
+  return changed;
+}
+let polling = false;
+async function poll() {
+  if (polling) return;
+  polling = true;
+  try {
+    const response = await fetch("/api/tree");
+    const tree = await response.json();
+    const before = JSON.stringify(state.tree);
+    state.tree = tree;
+    if (!state.hadSaved && !state.selected.size) autoSelect();
+    if (JSON.stringify(tree) !== before) renderTree();
+
+    const list = selectedExperiments();
+    for (const group of tree.groups) for (const item of group.experiments) {
+      if (state.selected.has(idOf(group.name, item.name))) experiment(group.name, item.name).size = item.size;
+    }
+    const results = await Promise.all(list.map(async ({ exp }) => [await fetchMetrics(exp), await fetchExtras(exp)]));
+    if (results.some(([m, x]) => m || x)) render();
+  } catch (error) {
+    console.warn("ALAG: update failed", error);
+  } finally {
+    polling = false;
+  }
+}
+function autoSelect() {
+  let newest = null;
+  for (const group of state.tree.groups) for (const item of group.experiments) {
+    if (!newest || item.age < newest.age) newest = { id: idOf(group.name, item.name), age: item.age };
+  }
+  if (newest) { setSelected(newest.id, true); state.hadSaved = true; renderTree(); }
+}
+function refresh() {
+  renderTree();
+  renderLegend();
+  render();
+  poll();
+}
+
+/* ---------- number formatting ---------- */
+function fmt(value) {
+  if (!Number.isFinite(value)) return String(value);
+  const abs = Math.abs(value);
+  if (abs !== 0 && (abs >= 1e6 || abs < 1e-3)) return value.toExponential(2);
+  return Number(value.toPrecision(4)).toString();
+}
+function fmtTime(seconds) {
+  if (seconds < 60) return Number(seconds.toFixed(1)) + "s";
+  const h = Math.floor(seconds / 3600), m = Math.floor(seconds % 3600 / 60), s = Math.floor(seconds % 60);
+  return h ? h + "h " + String(m).padStart(2, "0") + "m" : m + "m " + String(s).padStart(2, "0") + "s";
+}
+const fmtX = value => state.xaxis === "time" ? fmtTime(value) : Number(value.toPrecision(6)).toLocaleString();
+function niceTicks(min, max, count) {
+  const span = max - min || 1;
+  const rough = span / count;
+  const power = 10 ** Math.floor(Math.log10(rough));
+  const unit = [1, 2, 5, 10].find(n => n * power >= rough) * power;
+  const ticks = [];
+  for (let v = Math.ceil(min / unit) * unit; v <= max + unit * 1e-9; v += unit) ticks.push(Number(v.toPrecision(12)));
+  return ticks;
+}
+
+/* ---------- charts ---------- */
+function smoothed(ys) {
+  const weight = state.smooth;
+  if (!weight) return ys;
+  const out = new Array(ys.length);
+  let average = 0, correction = 0;
+  for (let i = 0; i < ys.length; i++) {
+    if (!Number.isFinite(ys[i])) { out[i] = NaN; continue; }
+    average = average * weight + ys[i] * (1 - weight);
+    correction = correction * weight + (1 - weight);
+    out[i] = average / correction;
+  }
+  return out;
+}
+function lowerBound(xs, x) {
+  let lo = 0, hi = xs.length;
+  while (lo < hi) { const mid = (lo + hi) >> 1; xs[mid] < x ? lo = mid + 1 : hi = mid; }
+  return lo;
+}
+function seriesFor(metric) {
+  const list = [];
+  for (const { exp, slot } of selectedExperiments()) {
+    const series = exp.series.get(metric);
+    if (series) list.push({ exp, slot, xs: series[state.xaxis], raw: series.y, ys: smoothed(series.y) });
+  }
+  return list;
+}
+function drawLine(ctx, s, ys, view, width, alpha, lineWidth) {
+  const { x0, x1, y, px } = view;
+  const first = Math.max(lowerBound(s.xs, x0) - 1, 0);
+  const last = Math.min(lowerBound(s.xs, x1) + 1, s.xs.length);
+  ctx.strokeStyle = colorOf(s.slot);
+  ctx.globalAlpha = alpha;
+  ctx.lineWidth = lineWidth;
+  ctx.setLineDash(dashOf(s.slot));
+  ctx.lineJoin = "round";
+  ctx.beginPath();
+  let pen = false;
+  const dense = last - first > width * 2;
+  if (!dense) {
+    for (let i = first; i < last; i++) {
+      const v = y(ys[i]);
+      if (!Number.isFinite(v)) { pen = false; continue; }
+      const cx = px(s.xs[i]);
+      pen ? ctx.lineTo(cx, v) : ctx.moveTo(cx, v);
+      pen = true;
+    }
+  } else {
+    // Long runs have more points than pixels. Keeping each column's extremes
+    // draws the same shape, spikes included, at a fixed cost.
+    let column = -1, low = Infinity, high = -Infinity;
+    const flush = () => {
+      if (column < 0 || low === Infinity) return;
+      pen ? ctx.lineTo(column, high) : ctx.moveTo(column, high);
+      ctx.lineTo(column, low);
+      pen = true;
+    };
+    for (let i = first; i < last; i++) {
+      const c = Math.round(px(s.xs[i]));
+      if (c !== column) { flush(); column = c; low = Infinity; high = -Infinity; }
+      const v = y(ys[i]);
+      if (Number.isFinite(v)) { if (v < low) low = v; if (v > high) high = v; }
+    }
+    flush();
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+}
+function drawChart(chart) {
+  const canvas = chart.canvas;
+  const rect = canvas.getBoundingClientRect();
+  if (!rect.width) return;
+  const ratio = devicePixelRatio || 1;
+  const W = rect.width, H = rect.height;
+  if (canvas.width !== Math.round(W * ratio) || canvas.height !== Math.round(H * ratio)) {
+    canvas.width = Math.round(W * ratio);
+    canvas.height = Math.round(H * ratio);
+  }
+  const ctx = canvas.getContext("2d");
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+
+  const list = seriesFor(chart.metric);
+  chart.list = list;
+  let x0 = Infinity, x1 = -Infinity;
+  for (const s of list) if (s.xs.length) { x0 = Math.min(x0, s.xs[0]); x1 = Math.max(x1, s.xs[s.xs.length - 1]); }
+  if (x0 === Infinity) return;
+  if (state.zoom) [x0, x1] = state.zoom;
+  if (x0 === x1) { x0 -= 1; x1 += 1; }
+
+  const logY = state.logy;
+  const usable = v => Number.isFinite(v) && (!logY || v > 0);
+  let lo = Infinity, hi = -Infinity;
+  for (const s of list) {
+    const ys = state.smooth ? s.ys : s.raw;
+    const a = lowerBound(s.xs, x0), b = lowerBound(s.xs, x1 + 1e-12);
+    for (let i = a; i < b; i++) if (usable(ys[i])) { if (ys[i] < lo) lo = ys[i]; if (ys[i] > hi) hi = ys[i]; }
+  }
+  if (lo === Infinity) { lo = logY ? 0.1 : 0; hi = logY ? 1 : 1; }
+  const tf = v => logY ? (v > 0 ? Math.log10(v) : NaN) : v;
+  let t0 = tf(lo), t1 = tf(hi);
+  if (t0 === t1) { t0 -= Math.abs(t0) * 0.1 || 1; t1 += Math.abs(t1) * 0.1 || 1; }
+  const pad = (t1 - t0) * 0.06;
+  t0 -= pad; t1 += pad;
+
+  const yTicks = logY
+    ? niceTicks(t0, t1, 4).filter(Number.isInteger).map(v => ({ at: v, text: fmt(10 ** v) }))
+    : niceTicks(t0, t1, 5).map(v => ({ at: v, text: fmt(v) }));
+  ctx.font = "11px system-ui, sans-serif";
+  const left = Math.ceil(Math.max(28, ...yTicks.map(t => ctx.measureText(t.text).width)) + 10);
+  const plot = { l: left, r: W - 12, t: 6, b: H - 22 };
+  const px = x => plot.l + (x - x0) / (x1 - x0) * (plot.r - plot.l);
+  const py = t => plot.b - (t - t0) / (t1 - t0) * (plot.b - plot.t);
+  const y = v => py(tf(v));
+  Object.assign(chart, { plot, px, x0, x1, invert: p => x0 + (p - plot.l) / (plot.r - plot.l) * (x1 - x0) });
+
+  ctx.lineWidth = 1;
+  ctx.fillStyle = ink["text-3"];
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "right";
+  for (const tick of yTicks) {
+    const at = Math.round(py(tick.at)) + 0.5;
+    ctx.strokeStyle = ink.grid;
+    ctx.beginPath(); ctx.moveTo(plot.l, at); ctx.lineTo(plot.r, at); ctx.stroke();
+    ctx.fillText(tick.text, plot.l - 6, at);
+  }
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
+  const xTicks = niceTicks(x0, x1, Math.max(2, Math.floor((plot.r - plot.l) / 90)));
+  for (const tick of xTicks) ctx.fillText(fmtX(tick), px(tick), plot.b + 7);
+  ctx.strokeStyle = ink.line;
+  ctx.beginPath(); ctx.moveTo(plot.l, plot.b + 0.5); ctx.lineTo(plot.r, plot.b + 0.5); ctx.stroke();
+
+  ctx.save();
+  ctx.beginPath(); ctx.rect(plot.l, 0, plot.r - plot.l, plot.b); ctx.clip();
+  const view = { x0, x1, y, px };
+  for (const s of list) {
+    if (state.smooth) drawLine(ctx, s, s.raw, view, W, 0.2, 1);
+    drawLine(ctx, s, s.ys, view, W, 1, 2);
+  }
+  ctx.restore();
+
+  if (chart.drag) {
+    const a = Math.max(plot.l, Math.min(chart.drag.from, chart.drag.to));
+    const b = Math.min(plot.r, Math.max(chart.drag.from, chart.drag.to));
+    ctx.fillStyle = ink["text-3"];
+    ctx.globalAlpha = 0.18;
+    ctx.fillRect(a, plot.t, b - a, plot.b - plot.t);
+    ctx.globalAlpha = 1;
+  }
+  if (chart.hoverX !== undefined) {
+    ctx.strokeStyle = ink["text-3"];
+    const at = Math.round(px(chart.hoverX)) + 0.5;
+    ctx.beginPath(); ctx.moveTo(at, plot.t); ctx.lineTo(at, plot.b); ctx.stroke();
+    for (const s of list) {
+      const i = nearest(s.xs, chart.hoverX);
+      const v = y(s.ys[i]);
+      if (i < 0 || !Number.isFinite(v) || Math.abs(s.xs[i] - chart.hoverX) > (x1 - x0) * 0.05) continue;
+      ctx.fillStyle = colorOf(s.slot);
+      ctx.strokeStyle = ink.surface;
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(px(s.xs[i]), v, 4, 0, 7); ctx.fill(); ctx.stroke();
+    }
+  }
+}
+function nearest(xs, x) {
+  if (!xs.length) return -1;
+  const i = Math.min(lowerBound(xs, x), xs.length - 1);
+  return i > 0 && x - xs[i - 1] < xs[i] - x ? i - 1 : i;
+}
+function showTip(chart, event) {
+  const tip = $("tip");
+  if (!chart.list || !chart.list.length || !chart.plot) return;
+  const rect = chart.canvas.getBoundingClientRect();
+  const pointer = event.clientX - rect.left;
+  if (pointer < chart.plot.l || pointer > chart.plot.r) return hideTip(chart);
+  const target = chart.invert(pointer);
+  let snapped = null;
+  for (const s of chart.list) {
+    const i = nearest(s.xs, target);
+    if (i >= 0 && (snapped === null || Math.abs(s.xs[i] - target) < Math.abs(snapped - target))) snapped = s.xs[i];
+  }
+  chart.hoverX = snapped;
+  tip.replaceChildren(el("div", "head", (state.xaxis === "time" ? "Time " : "Step ") + fmtX(snapped)));
+  for (const s of chart.list) {
+    const i = nearest(s.xs, snapped);
+    if (i < 0 || Math.abs(s.xs[i] - snapped) > (chart.x1 - chart.x0) * 0.05) continue;
+    const row = el("div", "tiprow");
+    row.append(lineKey(s.slot), el("strong", "", fmt(s.ys[i])), el("span", "label", labelOf(s.exp)));
+    tip.append(row);
+  }
+  tip.style.display = "block";
+  const box = tip.getBoundingClientRect();
+  const x = event.clientX + 14 + box.width > innerWidth ? event.clientX - box.width - 14 : event.clientX + 14;
+  tip.style.left = Math.max(4, x) + "px";
+  tip.style.top = Math.max(4, Math.min(event.clientY + 14, innerHeight - box.height - 4)) + "px";
+  drawChart(chart);
+}
+function hideTip(chart) {
+  $("tip").style.display = "none";
+  chart.hoverX = undefined;
+  drawChart(chart);
+}
+function setZoom(zoom) {
+  state.zoom = zoom;
+  $("reset").hidden = !zoom;
+  drawAll();
+}
+function makeChart(metric) {
+  const card = el("section", "chart");
+  card.append(el("h3", "", metric));
+  const canvas = el("canvas");
+  canvas.setAttribute("role", "img");
+  canvas.setAttribute("aria-label", "Line chart of " + metric + ". The Table tab lists the latest values.");
+  card.append(canvas);
+  const chart = { metric, card, canvas };
+  const local = event => event.clientX - canvas.getBoundingClientRect().left;
+  canvas.onpointerdown = event => {
+    canvas.setPointerCapture(event.pointerId);
+    chart.drag = { from: local(event), to: local(event) };
+  };
+  canvas.onpointermove = event => {
+    if (chart.drag) { chart.drag.to = local(event); $("tip").style.display = "none"; chart.hoverX = undefined; drawChart(chart); }
+    else showTip(chart, event);
+  };
+  canvas.onpointerup = () => {
+    const drag = chart.drag;
+    chart.drag = undefined;
+    if (drag && Math.abs(drag.to - drag.from) > 6 && chart.plot) {
+      const a = chart.invert(Math.max(chart.plot.l, Math.min(drag.from, drag.to)));
+      const b = chart.invert(Math.min(chart.plot.r, Math.max(drag.from, drag.to)));
+      setZoom([a, b]);
+    } else drawChart(chart);
+  };
+  canvas.onpointerleave = () => hideTip(chart);
+  canvas.ondblclick = () => setZoom(null);
+  return chart;
+}
+function drawAll() { for (const chart of charts.values()) drawChart(chart); }
+
+function renderCharts() {
+  const content = $("content");
+  const metrics = new Set();
+  const list = selectedExperiments();
+  for (const { exp } of list) for (const name of exp.series.keys()) metrics.add(name);
+  const names = [...metrics].sort();
+  const signature = names.join("\n");
+
+  if (signature !== renderCharts.signature || !content.querySelector(".charts")) {
+    renderCharts.signature = signature;
+    content.replaceChildren();
+    if (!names.length) {
+      content.append(el("div", "empty", list.length ? "No scalars logged yet." : "Select experiments on the left to compare them."));
+      charts.clear();
+      return;
+    }
+    const sections = new Map();
+    for (const name of names) {
+      const slash = name.indexOf("/");
+      const section = slash > 0 ? name.slice(0, slash) : "";
+      if (!sections.has(section)) sections.set(section, []);
+      sections.get(section).push(name);
+    }
+    for (const [section, members] of sections) {
+      if (sections.size > 1 || section) content.append(el("h2", "", section || "Other"));
+      const grid = el("div", "charts");
+      for (const name of members) {
+        const chart = charts.get(name) ?? makeChart(name);
+        charts.set(name, chart);
+        grid.append(chart.card);
+      }
+      content.append(grid);
+    }
+    for (const name of [...charts.keys()]) if (!metrics.has(name)) charts.delete(name);
+  }
+  drawAll();
+}
+
+/* ---------- images ---------- */
+function renderImages() {
+  const content = $("content");
+  const list = selectedExperiments();
+  const names = new Map();
+  for (const { exp, slot } of list) for (const image of exp.images) {
+    if (!names.has(image.name)) names.set(image.name, []);
+    names.get(image.name).push({ exp, slot, image });
+  }
+  const scroll = $("main").scrollTop;
+  content.replaceChildren();
+  if (!names.size) {
+    content.append(el("div", "empty", list.length ? "No images logged yet." : "Select experiments on the left to compare them."));
+    return;
+  }
+  for (const name of [...names.keys()].sort()) {
+    const entries = names.get(name);
+    const steps = [...new Set(entries.map(item => item.image.step))].sort((a, b) => a - b);
+    state.imageStep ??= {};
+    const follow = state.imageStep[name] === undefined;
+    const index = follow ? steps.length - 1 : Math.min(state.imageStep[name], steps.length - 1);
+    const step = steps[index];
+
+    content.append(el("h2", "", name));
+    const scrub = el("div", "scrub");
+    const slider = el("input");
+    slider.type = "range"; slider.min = 0; slider.max = steps.length - 1; slider.value = index;
+    slider.setAttribute("aria-label", "Step for " + name);
+    const label = el("span", "", "Step " + step);
+    scrub.append(slider, label);
+    content.append(scrub);
+
+    const grid = el("div", "images");
+    const paint = current => {
+      grid.replaceChildren();
+      for (const { exp, slot } of list) {
+        const mine = entries.filter(item => item.exp === exp).map(item => item.image);
+        if (!mine.length) continue;
+        // Experiments can log images at different steps, so use the closest one.
+        const image = mine.reduce((a, b) => Math.abs(b.step - current) < Math.abs(a.step - current) ? b : a);
+        const figure = el("figure");
+        const caption = el("figcaption");
+        caption.append(lineKey(slot), document.createTextNode(labelOf(exp) + " · step " + image.step));
+        const img = el("img");
+        img.loading = "lazy";
+        img.alt = name + " at step " + image.step + " from " + labelOf(exp);
+        img.src = "/file?" + query(exp) + "&p=" + encodeURIComponent(image.path);
+        figure.append(caption, img);
+        grid.append(figure);
+      }
+    };
+    slider.oninput = () => {
+      const i = +slider.value;
+      state.imageStep[name] = i === steps.length - 1 ? undefined : i;
+      label.textContent = "Step " + steps[i];
+      paint(steps[i]);
+    };
+    paint(step);
+    content.append(grid);
+  }
+  $("main").scrollTop = scroll;
+}
+
+/* ---------- table ---------- */
+function flatten(value, prefix, out) {
+  if (value && typeof value === "object" && !Array.isArray(value)) {
+    for (const [key, inner] of Object.entries(value)) flatten(inner, prefix ? prefix + "." + key : key, out);
+  } else out[prefix] = typeof value === "string" ? value : JSON.stringify(value);
+  return out;
+}
+function makeTable(title, list, rows) {
+  const content = $("content");
+  content.append(el("h2", "", title));
+  const wrap = el("div", "tablewrap");
+  const table = el("table");
+  const head = el("tr");
+  head.append(el("th", "", ""));
+  for (const { exp } of list) head.append(el("th", "", labelOf(exp)));
+  const thead = el("thead");
+  thead.append(head);
+  const body = el("tbody");
+  for (const row of rows) {
+    const tr = el("tr", row.differs ? "differs" : "");
+    tr.append(el("td", "", row.name));
+    for (const cell of row.cells) tr.append(el("td", "num", cell));
+    body.append(tr);
+  }
+  table.append(thead, body);
+  wrap.append(table);
+  content.append(wrap);
+}
+function renderTable() {
+  const content = $("content");
+  const list = selectedExperiments();
+  const scroll = $("main").scrollTop;
+  content.replaceChildren();
+  if (!list.length) {
+    content.append(el("div", "empty", "Select experiments on the left to compare them."));
+    return;
+  }
+  const configs = list.map(({ exp }) => flatten(exp.config ?? {}, "", {}));
+  const keys = [...new Set(configs.flatMap(Object.keys))].filter(Boolean).sort();
+  const configRows = keys.map(name => {
+    const cells = configs.map(config => config[name] ?? "–");
+    return { name, cells, differs: new Set(cells).size > 1 };
+  }).sort((a, b) => b.differs - a.differs);
+  if (configRows.length) makeTable("Config (settings that differ come first, in bold)", list, configRows);
+
+  const metrics = [...new Set(list.flatMap(({ exp }) => [...exp.series.keys()]))].sort();
+  const last = (exp, name) => {
+    const ys = exp.series.get(name)?.y ?? [];
+    for (let i = ys.length - 1; i >= 0; i--) if (Number.isFinite(ys[i])) return fmt(ys[i]);
+    return "–";
+  };
+  if (metrics.length) makeTable("Latest values", list, metrics.map(name => ({ name, cells: list.map(({ exp }) => last(exp, name)) })));
+  $("main").scrollTop = scroll;
+}
+
+/* ---------- wiring ---------- */
+function render() {
+  renderLegend();
+  if (state.tab === "charts") renderCharts();
+  else if (state.tab === "images") renderImages();
+  else renderTable();
+}
+for (const button of document.querySelectorAll("#tabs button")) {
+  button.onclick = () => {
+    state.tab = button.dataset.tab;
+    for (const other of document.querySelectorAll("#tabs button")) other.setAttribute("aria-selected", other === button);
+    renderCharts.signature = null;
+    $("content").replaceChildren();
+    render();
+    poll();
+  };
+}
+$("filter").oninput = event => { state.filter = event.target.value; renderTree(); };
+$("smooth").oninput = event => {
+  state.smooth = +event.target.value;
+  $("smoothval").textContent = event.target.value;
+  drawAll();
+};
+$("xaxis").onchange = event => { state.xaxis = event.target.value; setZoom(null); };
+$("logy").onchange = event => { state.logy = event.target.checked; drawAll(); };
+$("reset").onclick = () => setZoom(null);
+addEventListener("resize", drawAll);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { readTheme(); renderTree(); render(); });
+
+readTheme();
+render();
+poll();
+setInterval(poll, POLL_MS);
+</script>
+</body>
+</html>

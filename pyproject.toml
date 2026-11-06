@@ -1,0 +1,16 @@
+[build-system]
+requires = ["maturin>=1.8,<2"]
+build-backend = "maturin"
+
+[project]
+name = "alag"
+version = "0.1.0"
+description = "A simple logging and graphing tool for researchers"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+
+[tool.maturin]
+bindings = "bin"
+python-source = "python"
+module-name = "alag"
