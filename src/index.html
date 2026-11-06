@@ -35,6 +35,7 @@ button, input, select { font: inherit; color: inherit; }
 }
 #panel header { padding: 14px 14px 10px; }
 #panel h1 { margin: 0 0 10px; font-size: 16px; letter-spacing: .04em; }
+#exported { margin: -6px 0 10px; font-size: 12px; color: var(--text-2); }
 #filter {
   width: 100%; padding: 6px 8px; border: 1px solid var(--line);
   border-radius: 6px; background: var(--surface);
@@ -42,7 +43,7 @@ button, input, select { font: inherit; color: inherit; }
 #tree { flex: 1; overflow-y: auto; padding: 0 6px 12px; }
 .group { margin-top: 6px; }
 .row {
-  display: flex; align-items: center; gap: 8px; padding: 4px 8px;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; padding: 4px 8px;
   border-radius: 6px; cursor: pointer; min-width: 0;
 }
 .row:hover { background: var(--line); }
@@ -62,7 +63,7 @@ button, input, select { font: inherit; color: inherit; }
   border-bottom: 1px solid var(--line); padding: 8px 16px;
 }
 #controls { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 18px; }
-#tabs { display: flex; gap: 2px; }
+#tabs { display: flex; flex-wrap: wrap; gap: 2px; }
 #tabs button {
   border: 0; background: none; padding: 5px 10px; border-radius: 6px;
   cursor: pointer; color: var(--text-2);
@@ -81,7 +82,41 @@ h2 { font-size: 13px; color: var(--text-2); margin: 18px 0 8px; font-weight: 600
 h2:first-child { margin-top: 4px; }
 .charts { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 12px; }
 .chart { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px 4px; min-width: 0; }
-.chart h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+.charthead { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 10px; margin-bottom: 4px; }
+.chart h3 { margin: 0; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+.tools { display: flex; gap: 2px; }
+.tool, .link { border: 0; background: none; cursor: pointer; color: var(--text-2); font-size: 12px; padding: 1px 5px; border-radius: 4px; }
+.tool:hover, .link:hover { background: var(--panel); color: var(--text); }
+.flagform { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; padding: 6px 0; font-size: 12px; color: var(--text-2); }
+.flagform[hidden] { display: none; }
+.flagform select, .flagform input { background: var(--surface); border: 1px solid var(--line); border-radius: 5px; padding: 1px 4px; font-size: 12px; }
+.flagform input { width: 76px; }
+.flagform input.sectionname { width: 160px; }
+.flagform button[type=submit] { border: 1px solid var(--line); background: var(--panel); border-radius: 5px; font-size: 12px; cursor: pointer; padding: 1px 8px; }
+.hint { color: var(--text-3); flex-basis: 100%; }
+.flaglist:not(:empty) { border-top: 1px solid var(--line); margin-top: 4px; padding: 4px 0; font-size: 12px; }
+.flaghead { display: flex; justify-content: space-between; align-items: baseline; }
+.flaghead strong { font-weight: 600; }
+.flagitem { display: flex; align-items: center; gap: 6px; color: var(--text-2); }
+.flagitem .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flagitem .verdict { margin-left: auto; white-space: nowrap; color: var(--text); }
+.flagitem.pending .verdict { color: var(--text-2); }
+.flagitem.met .verdict { font-weight: 600; }
+.tags { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 3px; padding-left: 21px; }
+.tag { font-size: 11px; line-height: 1.3; color: var(--text-2); border: 1px solid var(--line); background: var(--surface); border-radius: 4px; padding: 0 4px; }
+.notecard { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; max-width: 760px; }
+.notecard h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 13px; font-weight: 600; }
+.notecard label { display: block; color: var(--text-2); font-size: 12px; margin-top: 6px; }
+.notecard input, .notecard textarea { display: block; width: 100%; margin-top: 2px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; }
+.notecard textarea { min-height: 70px; resize: vertical; }
+#latex { width: min(760px, calc(100vw - 32px)); background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
+#latex::backdrop { background: #0006; }
+#latex h2 { margin: 0 0 4px; color: var(--text); font-size: 14px; }
+#latex p { margin: 0 0 8px; color: var(--text-2); font-size: 13px; }
+#latexcode { width: 100%; height: 320px; resize: vertical; background: var(--panel); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 8px; font: 12px/1.45 ui-monospace, Menlo, Consolas, monospace; white-space: pre; }
+#latexactions { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+#latexactions button { border: 1px solid var(--line); background: var(--panel); border-radius: 6px; padding: 3px 10px; cursor: pointer; }
+#copied { color: var(--text-2); font-size: 13px; }
 .chart canvas { display: block; width: 100%; height: 230px; cursor: crosshair; touch-action: none; }
 #tip {
   position: fixed; z-index: 5; display: none; pointer-events: none;
@@ -92,6 +127,7 @@ h2:first-child { margin-top: 4px; }
 #tip .tiprow { display: flex; align-items: center; gap: 8px; }
 #tip strong { font-variant-numeric: tabular-nums; min-width: 64px; }
 #tip .label { color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.imagehead { display: flex; align-items: baseline; gap: 8px; }
 .images { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
 figure { margin: 0; border: 1px solid var(--line); border-radius: 8px; padding: 8px; min-width: 0; }
 figure img { display: block; width: 100%; height: auto; border-radius: 4px; background: #fff; }
@@ -103,8 +139,14 @@ table { border-collapse: collapse; font-size: 13px; }
 th, td { border-bottom: 1px solid var(--line); padding: 5px 14px 5px 0; text-align: left; white-space: nowrap; }
 th { font-weight: 600; color: var(--text-2); }
 td.num { font-variant-numeric: tabular-nums; }
-tr.differs td:first-child { font-weight: 600; }
-tbody th { font-weight: 400; color: var(--text); }
+.hyperhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 16px; margin-bottom: 8px; }
+.hyperhead h2 { margin: 4px 0; }
+.hyper th:first-child, .hyper td:first-child { position: sticky; left: 0; background: var(--surface); }
+.hyper .key { display: inline-block; vertical-align: middle; margin-right: 8px; }
+.hyper td.num { max-width: 280px; overflow: hidden; text-overflow: ellipsis; }
+.sort { border: 0; background: none; padding: 0; cursor: pointer; font-weight: 400; color: var(--text-2); }
+.sort:hover { color: var(--text); }
+th.varies .sort { font-weight: 600; color: var(--text); }
 @media (max-width: 760px) {
   body { grid-template-columns: minmax(0, 1fr); grid-template-rows: 38vh minmax(0, 1fr); height: 100vh; }
   #panel, #main { height: auto; }
@@ -117,6 +159,7 @@ tbody th { font-weight: 400; color: var(--text); }
 <aside id="panel">
   <header>
     <h1>ALAG</h1>
+    <p id="exported" hidden></p>
     <input id="filter" type="search" placeholder="Filter experiments" aria-label="Filter experiments">
   </header>
   <div id="tree"></div>
@@ -128,10 +171,13 @@ tbody th { font-weight: 400; color: var(--text); }
         <button role="tab" data-tab="charts" aria-selected="true">Charts</button>
         <button role="tab" data-tab="images" aria-selected="false">Images</button>
         <button role="tab" data-tab="table" aria-selected="false">Table</button>
+        <button role="tab" data-tab="hyper" aria-selected="false">Hyperparameters</button>
+        <button role="tab" data-tab="notes" aria-selected="false">Notes</button>
       </div>
       <label class="control">Smoothing <input id="smooth" type="range" min="0" max="0.99" step="0.01" value="0"><span id="smoothval">0</span></label>
       <label class="control">X axis <select id="xaxis"><option value="step">Step</option><option value="time">Time</option></select></label>
       <label class="control"><input id="logy" type="checkbox"> Log Y</label>
+      <label class="control" title="Merges selected experiments in a group whose config differs only by seed"><input id="aggregate" type="checkbox"> Mean ± std over seeds</label>
       <button id="reset" hidden>Reset zoom</button>
     </div>
     <div id="legend"></div>
@@ -139,11 +185,23 @@ tbody th { font-weight: 400; color: var(--text); }
   <div id="content"></div>
 </main>
 <div id="tip"></div>
+<datalist id="sections"></datalist>
+<dialog id="latex" aria-labelledby="latextitle">
+  <h2 id="latextitle">LaTeX figure</h2>
+  <p>Paste this into your document. The data is included, so there's no file to upload.</p>
+  <textarea id="latexcode" readonly spellcheck="false" aria-label="LaTeX code"></textarea>
+  <div id="latexactions">
+    <button id="copy">Copy</button>
+    <button id="closelatex">Close</button>
+    <span id="copied" role="status"></span>
+  </div>
+</dialog>
 <script>
 "use strict";
 const POLL_MS = 2000;
 const LIVE_SECONDS = 15;
 const SLOTS = 8;
+const EXPORT = window.ALAG_EXPORT ?? null;   // set in a file made by `alag --export`
 const DASHES = [[], [7, 4], [2, 3]];   // past 8 experiments, hues repeat with a new dash
 const $ = id => document.getElementById(id);
 const el = (tag, className, text) => {
@@ -153,9 +211,11 @@ const el = (tag, className, text) => {
   return node;
 };
 const load = (key, fallback) => {
+  if (EXPORT) return fallback;   // every exported file shares one origin, so storage would mix them
   try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
 };
 const save = (key, value) => {
+  if (EXPORT) return;
   try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
 };
 
@@ -165,11 +225,35 @@ const state = {
   hadSaved: load("alag.selected", null) !== null,
   collapsed: new Set(load("alag.collapsed", [])),
   tab: "charts", filter: "", smooth: 0, xaxis: "step", logy: false,
-  zoom: null, imageStep: null,
+  zoom: null, imageStep: null, aggregate: false,
+  hyperDiffOnly: load("alag.hyperDiffOnly", false), hyperSort: null,
+  version: 0,            // bumped whenever what the charts show changes
+  meta: new Map(),       // experiment id -> {note, tags}
+  flags: new Map(),      // group name -> [flag]
+  layouts: new Map(),    // group name -> {sections: {metric: name}, pinned: [name]}
 };
 const experiments = new Map();   // id -> loaded data
 const charts = new Map();        // metric -> {canvas, ...}
 const idOf = (g, e) => g + "/" + e;
+const parseJSON = (text, fallback) => {
+  try { return text ? JSON.parse(text) : fallback; } catch { return fallback; }
+};
+// Answers the page's requests from the data inside an exported file.
+function exportFetch(url) {
+  const { pathname, searchParams } = new URL(url, "http://alag");
+  const saved = EXPORT.experiments[idOf(searchParams.get("g"), searchParams.get("e"))];
+  const body = pathname === "/api/tree" ? JSON.stringify(EXPORT.tree)
+    : pathname === "/api/config" ? saved.config
+    : pathname === "/api/images" ? JSON.stringify(saved.images)
+    : searchParams.get("offset") === "0" ? saved.metrics : "";
+  return Promise.resolve(new Response(body));
+}
+const request = EXPORT ? exportFetch : url => fetch(url);
+const post = (path, data) => fetch(path, {
+  method: "POST",
+  headers: { "Content-Type": "application/json", "X-Alag-Write": "1" },
+  body: JSON.stringify(data),
+});
 
 function experiment(g, e) {
   const id = idOf(g, e);
@@ -188,6 +272,7 @@ function readTheme() {
   for (const name of ["surface", "line", "grid", "text", "text-2", "text-3"]) ink[name] = css.getPropertyValue("--" + name).trim();
 }
 const colorOf = slot => palette[slot % SLOTS];
+const screenTheme = () => ({ ...ink, series: palette });
 const dashOf = slot => DASHES[Math.floor(slot / SLOTS) % DASHES.length];
 function lineKey(slot) {
   const key = el("i", "key");
@@ -206,6 +291,7 @@ function freeSlot() {
 function setSelected(id, on) {
   if (on && !state.selected.has(id)) state.selected.set(id, freeSlot());
   if (!on) state.selected.delete(id);
+  state.version++;
   save("alag.selected", [...state.selected]);
 }
 function selectedExperiments() {
@@ -223,6 +309,37 @@ const labelOf = exp => {
   return clash ? exp.id : exp.e;
 };
 
+// What the charts plot: one line per experiment, or per set of seeds when merged.
+const SEED_KEY = /(^|[._-])seed$/i;
+function seedlessConfig(exp) {
+  const flat = flatten(exp.config ?? {}, "", {});
+  const keys = Object.keys(flat).sort();
+  if (!keys.some(key => SEED_KEY.test(key))) return exp.id;   // nothing says these are seeds
+  return exp.g + "\n" + JSON.stringify(keys.filter(key => !SEED_KEY.test(key)).map(key => [key, flat[key]]));
+}
+function sharedName(names) {
+  let prefix = names[0];
+  for (const name of names) while (!name.startsWith(prefix)) prefix = prefix.slice(0, -1);
+  return prefix.replace(/[-_.= ]*(seed|s)?[-_.= ]*$/i, "") || names[0];
+}
+let itemsCache = null;
+function displayItems() {
+  if (itemsCache && itemsCache.version === state.version) return itemsCache.list;
+  const buckets = new Map();
+  for (const { exp, slot } of selectedExperiments()) {
+    const key = state.aggregate ? seedlessConfig(exp) : exp.id;
+    if (!buckets.has(key)) buckets.set(key, { id: key, group: exp.g, slot, members: [] });
+    buckets.get(key).members.push(exp);
+  }
+  const list = [...buckets.values()];
+  for (const item of list) {
+    const { members } = item;
+    item.label = members.length > 1 ? sharedName(members.map(exp => exp.e)) + " (" + members.length + " seeds)" : labelOf(members[0]);
+  }
+  itemsCache = { version: state.version, list };
+  return list;
+}
+
 /* ---------- left panel ---------- */
 function renderTree() {
   const tree = $("tree");
@@ -234,7 +351,10 @@ function renderTree() {
     return;
   }
   for (const group of state.tree.groups) {
-    const shown = group.experiments.filter(e => (group.name + "/" + e.name).toLowerCase().includes(needle));
+    const shown = group.experiments.filter(e => {
+      const meta = state.meta.get(idOf(group.name, e.name)) ?? {};
+      return [group.name, e.name, meta.note ?? "", ...(meta.tags ?? [])].join("\n").toLowerCase().includes(needle);
+    });
     if (!shown.length) continue;
     const box = el("div", "group");
     const ids = shown.map(e => idOf(group.name, e.name));
@@ -269,10 +389,16 @@ function renderTree() {
         check.checked = state.selected.has(id);
         check.onchange = () => { setSelected(id, check.checked); refresh(); };
         const label = el("span", "name", item.name);
-        label.title = item.name;
+        const meta = state.meta.get(id) ?? {};
+        label.title = meta.note ? item.name + "\n\n" + meta.note : item.name;
         row.append(check, label);
-        if (item.age < LIVE_SECONDS) row.append(el("span", "live", "live"));
+        if (!EXPORT && item.age < LIVE_SECONDS) row.append(el("span", "live", "live"));
         if (state.selected.has(id)) row.append(lineKey(state.selected.get(id)));
+        if (meta.tags?.length) {
+          const tags = el("span", "tags");
+          for (const tag of meta.tags) tags.append(el("span", "tag", tag));
+          row.append(tags);
+        }
         box.append(row);
       }
     }
@@ -284,11 +410,11 @@ function renderTree() {
 function renderLegend() {
   const legend = $("legend");
   legend.replaceChildren();
-  const list = selectedExperiments();
-  if (list.length < 2) return;
-  for (const { exp, slot } of list) {
+  const list = displayItems();
+  if (list.length < 2 && !state.aggregate) return;
+  for (const { label, slot } of list) {
     const item = el("span");
-    item.append(lineKey(slot), document.createTextNode(labelOf(exp)));
+    item.append(lineKey(slot), document.createTextNode(label));
     legend.append(item);
   }
 }
@@ -323,12 +449,13 @@ function addRows(exp, text) {
     series.time.push(t - exp.start);
     series.y.push(parseFloat(value));   // "nan" and "inf" become gaps in the line
   }
+  state.version++;
 }
 const query = exp => "g=" + encodeURIComponent(exp.g) + "&e=" + encodeURIComponent(exp.e);
 async function fetchMetrics(exp) {
   let changed = false;
   while (exp.offset < exp.size) {
-    const response = await fetch("/api/metrics?" + query(exp) + "&offset=" + exp.offset);
+    const response = await request("/api/metrics?" + query(exp) + "&offset=" + exp.offset);
     if (!response.ok) break;
     const bytes = await response.arrayBuffer();
     if (!bytes.byteLength) break;     // only a half-written line so far
@@ -341,12 +468,13 @@ async function fetchMetrics(exp) {
 async function fetchExtras(exp) {
   let changed = false;
   if (exp.config === null) {
-    const response = await fetch("/api/config?" + query(exp));
+    const response = await request("/api/config?" + query(exp));
     exp.config = response.ok ? await response.json().catch(() => ({})) : {};
+    state.version++;
     changed = true;
   }
   if (state.tab === "images") {
-    const response = await fetch("/api/images?" + query(exp));
+    const response = await request("/api/images?" + query(exp));
     if (response.ok) {
       const images = await response.json();
       if (images.length !== exp.images.length) { exp.images = images; changed = true; }
@@ -359,10 +487,21 @@ async function poll() {
   if (polling) return;
   polling = true;
   try {
-    const response = await fetch("/api/tree");
+    const response = await request("/api/tree");
     const tree = await response.json();
     const before = JSON.stringify(state.tree);
     state.tree = tree;
+    let flagsChanged = false, layoutChanged = false;
+    for (const group of tree.groups) {
+      const flags = parseJSON(group.flags, []);
+      if (JSON.stringify(flags) !== JSON.stringify(state.flags.get(group.name) ?? [])) flagsChanged = true;
+      state.flags.set(group.name, flags);
+      const layout = readLayout(group.layout);
+      if (JSON.stringify(layout) !== JSON.stringify(state.layouts.get(group.name))) layoutChanged = true;
+      state.layouts.set(group.name, layout);
+      for (const item of group.experiments) state.meta.set(idOf(group.name, item.name), parseJSON(item.meta, {}));
+    }
+    if (flagsChanged) state.version++;
     if (!state.hadSaved && !state.selected.size) autoSelect();
     if (JSON.stringify(tree) !== before) renderTree();
 
@@ -371,7 +510,7 @@ async function poll() {
       if (state.selected.has(idOf(group.name, item.name))) experiment(group.name, item.name).size = item.size;
     }
     const results = await Promise.all(list.map(async ({ exp }) => [await fetchMetrics(exp), await fetchExtras(exp)]));
-    if (results.some(([m, x]) => m || x)) render();
+    if (flagsChanged || layoutChanged || results.some(([m, x]) => m || x)) render();
   } catch (error) {
     console.warn("ALAG: update failed", error);
   } finally {
@@ -381,9 +520,14 @@ async function poll() {
 function autoSelect() {
   let newest = null;
   for (const group of state.tree.groups) for (const item of group.experiments) {
-    if (!newest || item.age < newest.age) newest = { id: idOf(group.name, item.name), age: item.age };
+    if (!newest || item.age < newest.age) newest = { group, id: idOf(group.name, item.name), age: item.age };
   }
-  if (newest) { setSelected(newest.id, true); state.hadSaved = true; renderTree(); }
+  if (!newest) return;
+  // A report opens on a comparison. Live, the run you just started is what matters.
+  const ids = EXPORT ? newest.group.experiments.map(item => idOf(newest.group.name, item.name)) : [newest.id];
+  ids.forEach(id => setSelected(id, true));
+  state.hadSaved = true;
+  renderTree();
 }
 function refresh() {
   renderTree();
@@ -399,12 +543,13 @@ function fmt(value) {
   if (abs !== 0 && (abs >= 1e6 || abs < 1e-3)) return value.toExponential(2);
   return Number(value.toPrecision(4)).toString();
 }
+const fmtStep = step => Number(step).toLocaleString("en-US");
 function fmtTime(seconds) {
   if (seconds < 60) return Number(seconds.toFixed(1)) + "s";
   const h = Math.floor(seconds / 3600), m = Math.floor(seconds % 3600 / 60), s = Math.floor(seconds % 60);
   return h ? h + "h " + String(m).padStart(2, "0") + "m" : m + "m " + String(s).padStart(2, "0") + "s";
 }
-const fmtX = value => state.xaxis === "time" ? fmtTime(value) : Number(value.toPrecision(6)).toLocaleString();
+const fmtX = value => state.xaxis === "time" ? fmtTime(value) : fmtStep(value.toPrecision(6));
 function niceTicks(min, max, count) {
   const span = max - min || 1;
   const rough = span / count;
@@ -415,7 +560,7 @@ function niceTicks(min, max, count) {
   return ticks;
 }
 
-/* ---------- charts ---------- */
+/* ---------- series ---------- */
 function smoothed(ys) {
   const weight = state.smooth;
   if (!weight) return ys;
@@ -434,56 +579,343 @@ function lowerBound(xs, x) {
   while (lo < hi) { const mid = (lo + hi) >> 1; xs[mid] < x ? lo = mid + 1 : hi = mid; }
   return lo;
 }
-function seriesFor(metric) {
-  const list = [];
-  for (const { exp, slot } of selectedExperiments()) {
-    const series = exp.series.get(metric);
-    if (series) list.push({ exp, slot, xs: series[state.xaxis], raw: series.y, ys: smoothed(series.y) });
+function nearest(xs, x) {
+  if (!xs.length) return -1;
+  const i = Math.min(lowerBound(xs, x), xs.length - 1);
+  return i > 0 && x - xs[i - 1] < xs[i] - x ? i - 1 : i;
+}
+// Mean and sample std at each step. Smoothing is applied per seed first, so the
+// band shows how much the seeds disagree, not how noisy each step is.
+function aggregate(parts) {
+  const cells = new Map();
+  for (const part of parts) {
+    const ys = smoothed(part.y);
+    for (let i = 0; i < ys.length; i++) {
+      if (!Number.isFinite(ys[i])) continue;
+      let cell = cells.get(part.step[i]);
+      if (!cell) cells.set(part.step[i], cell = { n: 0, mean: 0, m2: 0 });
+      cell.n++;
+      const delta = ys[i] - cell.mean;
+      cell.mean += delta / cell.n;
+      cell.m2 += delta * (ys[i] - cell.mean);
+    }
   }
+  const steps = [...cells.keys()].sort((a, b) => a - b);
+  const ys = [], std = [], lo = [], hi = [], n = [];
+  for (const step of steps) {
+    const cell = cells.get(step);
+    const spread = cell.n > 1 ? Math.sqrt(cell.m2 / (cell.n - 1)) : 0;
+    ys.push(cell.mean); std.push(spread); n.push(cell.n);
+    lo.push(cell.mean - spread); hi.push(cell.mean + spread);
+  }
+  return { xs: steps, steps, ys, raw: null, std, lo, hi, n };
+}
+const seriesCache = new Map();
+function seriesFor(metric) {
+  const hit = seriesCache.get(metric);
+  if (hit && hit.version === state.version) return hit.list;
+  const list = [];
+  for (const item of displayItems()) {
+    const parts = item.members.map(exp => exp.series.get(metric)).filter(Boolean);
+    if (!parts.length) continue;
+    if (item.members.length > 1) list.push({ ...item, ...aggregate(parts) });
+    else list.push({ ...item, xs: parts[0][state.xaxis], steps: parts[0].step, raw: parts[0].y, ys: smoothed(parts[0].y) });
+  }
+  seriesCache.set(metric, { version: state.version, list });
   return list;
 }
-function drawLine(ctx, s, ys, view, width, alpha, lineWidth) {
-  const { x0, x1, y, px } = view;
-  const first = Math.max(lowerBound(s.xs, x0) - 1, 0);
-  const last = Math.min(lowerBound(s.xs, x1) + 1, s.xs.length);
-  ctx.strokeStyle = colorOf(s.slot);
-  ctx.globalAlpha = alpha;
-  ctx.lineWidth = lineWidth;
-  ctx.setLineDash(dashOf(s.slot));
-  ctx.lineJoin = "round";
-  ctx.beginPath();
-  let pen = false;
-  const dense = last - first > width * 2;
-  if (!dense) {
-    for (let i = first; i < last; i++) {
-      const v = y(ys[i]);
-      if (!Number.isFinite(v)) { pen = false; continue; }
-      const cx = px(s.xs[i]);
-      pen ? ctx.lineTo(cx, v) : ctx.moveTo(cx, v);
-      pen = true;
+
+/* ---------- flags ---------- */
+const flagId = flag => [flag.metric, flag.direction, flag.value, flag.step].join("|");
+function flagsFor(metric) {
+  const found = new Map();
+  for (const group of new Set(displayItems().map(item => item.group))) {
+    for (const flag of state.flags.get(group) ?? []) {
+      if (flag.metric !== metric) continue;
+      const id = flagId(flag);
+      if (!found.has(id)) found.set(id, { ...flag, id, groups: new Set() });
+      found.get(id).groups.add(group);
     }
-  } else {
-    // Long runs have more points than pixels. Keeping each column's extremes
-    // draws the same shape, spikes included, at a fixed cost.
-    let column = -1, low = Infinity, high = -Infinity;
-    const flush = () => {
-      if (column < 0 || low === Infinity) return;
-      pen ? ctx.lineTo(column, high) : ctx.moveTo(column, high);
-      ctx.lineTo(column, low);
-      pen = true;
-    };
-    for (let i = first; i < last; i++) {
-      const c = Math.round(px(s.xs[i]));
-      if (c !== column) { flush(); column = c; low = Infinity; high = -Infinity; }
-      const v = y(ys[i]);
-      if (Number.isFinite(v)) { if (v < low) low = v; if (v > high) high = v; }
-    }
-    flush();
   }
-  ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.globalAlpha = 1;
+  return [...found.values()];
 }
+const flagText = flag => flag.direction + " " + fmt(flag.value) + " by step " + fmtStep(flag.step);
+// Checked against the plotted line, so the verdict matches what's on the chart.
+function checkFlag(flag, s) {
+  const reached = v => flag.direction === "below" ? v <= flag.value : v >= flag.value;
+  const end = lowerBound(s.steps, flag.step + 1);
+  for (let i = 0; i < end; i++) if (reached(s.ys[i])) return { state: "met", step: s.steps[i] };
+  const last = s.steps[s.steps.length - 1];
+  if (last >= flag.step) return { state: "missed", value: s.ys[end - 1] };
+  return { state: "pending", step: last };
+}
+async function saveFlags(group, flags) {
+  state.flags.set(group, flags);
+  state.version++;
+  await post("/api/flags?g=" + encodeURIComponent(group), flags);
+}
+async function addFlag(flag) {
+  const groups = new Set(seriesFor(flag.metric).map(s => s.group));
+  for (const group of groups) {
+    const current = state.flags.get(group) ?? [];
+    if (!current.some(other => flagId(other) === flagId(flag))) await saveFlags(group, [...current, flag]);
+  }
+  render();
+}
+async function removeFlag(flag) {
+  for (const group of flag.groups) {
+    await saveFlags(group, (state.flags.get(group) ?? []).filter(other => flagId(other) !== flag.id));
+  }
+  render();
+}
+
+/* ---------- chart layout ---------- */
+function readLayout(text) {
+  const layout = parseJSON(text, {});
+  return {
+    sections: layout?.sections && typeof layout.sections === "object" ? layout.sections : {},
+    pinned: Array.isArray(layout?.pinned) ? layout.pinned : [],
+  };
+}
+const shownLayouts = () => [...new Set(selectedExperiments().map(({ exp }) => exp.g))]
+  .map(group => [group, state.layouts.get(group) ?? readLayout("")]);
+const isPinned = name => shownLayouts().some(([, layout]) => layout.pinned.includes(name));
+const chosenSection = metric => shownLayouts().map(([, layout]) => layout.sections[metric]).find(Boolean) ?? "";
+function sectionOf(metric) {
+  const slash = metric.indexOf("/");
+  return chosenSection(metric) || (slash > 0 ? metric.slice(0, slash) : "");
+}
+// Applies to every group on screen, like flags, so a comparison stays arranged.
+async function changeLayout(change) {
+  const changed = shownLayouts().map(([group, layout]) => {
+    const next = { sections: { ...layout.sections }, pinned: [...layout.pinned] };
+    change(next);
+    state.layouts.set(group, next);
+    return [group, next];
+  });
+  render();
+  for (const [group, next] of changed) await post("/api/layout?g=" + encodeURIComponent(group), next);
+}
+function togglePin(name) {
+  const pin = !isPinned(name);
+  changeLayout(layout => {
+    layout.pinned = layout.pinned.filter(other => other !== name);
+    if (pin) layout.pinned.push(name);
+  });
+}
+
+/* ---------- scene: one description of a chart, drawn by every output ---------- */
+const measurer = document.createElement("canvas").getContext("2d");
+function textWidth(text, size, font) {
+  measurer.font = size + "px " + font;
+  return measurer.measureText(text).width;
+}
+// Picks which points to draw. Long runs have more points than pixels, and keeping
+// each column's extremes keeps the same shape, spikes included, at a fixed cost.
+// -1 marks a gap.
+function pick(xs, ys, x0, x1, columns, usable) {
+  const first = Math.max(lowerBound(xs, x0) - 1, 0);
+  const last = Math.min(lowerBound(xs, x1) + 1, xs.length);
+  const out = [];
+  if (last - first <= columns * 2) {
+    for (let i = first; i < last; i++) out.push(usable(ys[i]) ? i : -1);
+    return out;
+  }
+  let column = null, low = -1, high = -1;
+  const flush = () => {
+    if (column === null) return;
+    if (low < 0) out.push(-1);
+    else if (low === high) out.push(low);
+    else out.push(Math.min(low, high), Math.max(low, high));
+  };
+  for (let i = first; i < last; i++) {
+    const c = Math.floor((xs[i] - x0) / (x1 - x0) * columns);
+    if (c !== column) { flush(); column = c; low = high = -1; }
+    if (!usable(ys[i])) continue;
+    if (low < 0 || ys[i] < ys[low]) low = i;
+    if (high < 0 || ys[i] > ys[high]) high = i;
+  }
+  flush();
+  return out;
+}
+function segments(indices) {
+  const runs = [];
+  let run = [];
+  for (const i of indices) {
+    if (i >= 0) run.push(i);
+    else if (run.length) { runs.push(run); run = []; }
+  }
+  if (run.length) runs.push(run);
+  return runs;
+}
+function plotRange(list, flags) {
+  let x0 = Infinity, x1 = -Infinity;
+  for (const s of list) if (s.xs.length) { x0 = Math.min(x0, s.xs[0]); x1 = Math.max(x1, s.xs[s.xs.length - 1]); }
+  if (x0 === Infinity) return null;
+  // A target further along than the run so far should still be on the chart.
+  if (state.xaxis === "step") for (const flag of flags) { x0 = Math.min(x0, flag.step); x1 = Math.max(x1, flag.step); }
+  if (state.zoom) [x0, x1] = state.zoom;
+  if (x0 === x1) { x0 -= 1; x1 += 1; }
+
+  const logY = state.logy;
+  const usable = v => Number.isFinite(v) && (!logY || v > 0);
+  let lo = Infinity, hi = -Infinity;
+  const include = v => { if (usable(v)) { if (v < lo) lo = v; if (v > hi) hi = v; } };
+  for (const s of list) {
+    const a = lowerBound(s.xs, x0), b = lowerBound(s.xs, x1 + 1e-12);
+    for (let i = a; i < b; i++) {
+      include(s.ys[i]);
+      if (s.lo) { include(s.lo[i]); include(s.hi[i]); }
+    }
+  }
+  for (const flag of flags) include(flag.value);
+  if (lo === Infinity) { lo = logY ? 0.1 : 0; hi = 1; }
+  const tf = v => logY ? (v > 0 ? Math.log10(v) : NaN) : v;
+  let t0 = tf(lo), t1 = tf(hi);
+  if (t0 === t1) { t0 -= Math.abs(t0) * 0.1 || 1; t1 += Math.abs(t1) * 0.1 || 1; }
+  const pad = (t1 - t0) * 0.06;
+  return { x0, x1, t0: t0 - pad, t1: t1 + pad, tf, usable };
+}
+function buildScene(metric, list, flags, o) {
+  const range = plotRange(list, flags);
+  if (!range) return null;
+  const { x0, x1, t0, t1, tf, usable } = range;
+  const { W, H, theme, font, size } = o;
+  const prims = [];
+  const text = (x, y, value, color, anchor, extra) => prims.push({ k: "text", x, y, text: value, color, anchor, size, ...extra });
+  const line = (pts, color, width, extra) => prims.push({ k: "line", pts, color, width, dash: [], alpha: 1, ...extra });
+  const seriesColor = slot => theme.series[slot % SLOTS];
+
+  let top = 8;
+  if (o.title) {
+    text(10, 20, metric, theme.text, "start", { size: size + 3 });
+    top = 34;
+  }
+  if (o.legend && list.length > 1) {
+    let x = 10, y = top + 6;
+    for (const s of list) {
+      const width = 24 + textWidth(s.label, size, font) + 14;
+      if (x + width > W - 10 && x > 10) { x = 10; y += size + 7; }
+      line([[x, y - 4], [x + 18, y - 4]], seriesColor(s.slot), 2, { dash: dashOf(s.slot) });
+      text(x + 24, y, s.label, theme["text-2"], "start");
+      x += width;
+    }
+    top = y + 12;
+  }
+
+  const logY = state.logy;
+  const yTicks = logY
+    ? niceTicks(t0, t1, 4).filter(Number.isInteger).map(v => ({ at: v, text: fmt(10 ** v) }))
+    : niceTicks(t0, t1, 5).map(v => ({ at: v, text: fmt(v) }));
+  const left = Math.ceil(Math.max(28, ...yTicks.map(t => textWidth(t.text, size, font))) + 10);
+  const plot = { l: left, r: W - 14, t: top, b: H - (o.title ? 40 : 22) };
+  const px = x => plot.l + (x - x0) / (x1 - x0) * (plot.r - plot.l);
+  const py = t => plot.b - (t - t0) / (t1 - t0) * (plot.b - plot.t);
+  const y = v => py(tf(v));
+
+  for (const tick of yTicks) {
+    const at = Math.round(py(tick.at)) + 0.5;
+    line([[plot.l, at], [plot.r, at]], theme.grid, 1);
+    text(plot.l - 6, at + size * 0.35, tick.text, theme["text-3"], "end");
+  }
+  for (const tick of niceTicks(x0, x1, Math.max(2, Math.floor((plot.r - plot.l) / 90)))) {
+    text(px(tick), plot.b + size + 6, fmtX(tick), theme["text-3"], "middle");
+  }
+  line([[plot.l, plot.b + 0.5], [plot.r, plot.b + 0.5]], theme.line, 1);
+  if (o.title) text((plot.l + plot.r) / 2, H - 8, state.xaxis === "time" ? "Time" : "Step", theme["text-2"], "middle");
+
+  const columns = Math.ceil(plot.r - plot.l);
+  for (const s of list) {
+    if (s.lo) {
+      const shown = pick(s.xs, s.ys, x0, x1, columns, usable).filter(i => i >= 0 && usable(s.lo[i]));
+      if (shown.length > 1) {
+        const pts = shown.map(i => [px(s.xs[i]), y(s.hi[i])]).concat(shown.slice().reverse().map(i => [px(s.xs[i]), y(s.lo[i])]));
+        prims.push({ k: "poly", pts, color: seriesColor(s.slot), alpha: 0.18, clip: true });
+      }
+    }
+    if (state.smooth && s.raw) {
+      for (const run of segments(pick(s.xs, s.raw, x0, x1, columns, usable))) {
+        line(run.map(i => [px(s.xs[i]), y(s.raw[i])]), seriesColor(s.slot), 1, { alpha: 0.2, dash: dashOf(s.slot), clip: true });
+      }
+    }
+    for (const run of segments(pick(s.xs, s.ys, x0, x1, columns, usable))) {
+      const pts = run.map(i => [px(s.xs[i]), y(s.ys[i])]);
+      if (pts.length === 1) pts.push([pts[0][0] + 0.01, pts[0][1]]);
+      line(pts, seriesColor(s.slot), 2, { dash: dashOf(s.slot), clip: true });
+    }
+  }
+
+  for (const flag of flags) {
+    if (!usable(flag.value)) continue;
+    const fy = y(flag.value), ink = theme["text-2"], dash = [4, 3];
+    if (state.xaxis !== "step") {
+      line([[plot.l, fy], [plot.r, fy]], ink, 1, { dash, clip: true });
+      continue;
+    }
+    const fx = px(flag.step);
+    line([[plot.l, fy], [fx, fy]], ink, 1, { dash, clip: true });
+    line([[fx, plot.b], [fx, fy]], ink, 1, { dash, clip: true });
+    line([[fx, fy], [fx, fy - 16]], theme.text, 1.5, { clip: true });
+    prims.push({ k: "poly", pts: [[fx, fy - 16], [fx + 10, fy - 12.5], [fx, fy - 9]], color: theme.text, alpha: 1, clip: true });
+    const label = flagText(flag);
+    const width = textWidth(label, size, font);
+    const fits = fx + 14 + width < plot.r;
+    const left = fits ? fx + 12 : fx - 7 - width;
+    const box = [fy - 11 - size * 0.7, fy - 11 + size * 0.7];
+    // A backing keeps the label readable where it sits on top of a line.
+    prims.push({ k: "poly", pts: [[left, box[0]], [left + width + 4, box[0]], [left + width + 4, box[1]], [left, box[1]]], color: theme.surface, alpha: 0.85, clip: true });
+    text(fits ? fx + 14 : fx - 5, fy - 11 + size * 0.35, label, theme.text, fits ? "start" : "end", { clip: true });
+  }
+
+  return {
+    W, H, plot, prims, font, x0, x1, px, y,
+    invertX: p => x0 + (p - plot.l) / (plot.r - plot.l) * (x1 - x0),
+    invertY: p => {
+      const t = t0 + (plot.b - p) / (plot.b - plot.t) * (t1 - t0);
+      return logY ? 10 ** t : t;
+    },
+  };
+}
+function paintCanvas(ctx, scene) {
+  let clipped = false;
+  ctx.lineJoin = "round";
+  for (const p of scene.prims) {
+    if (!!p.clip !== clipped) {
+      clipped = !clipped;
+      if (clipped) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(scene.plot.l, scene.plot.t, scene.plot.r - scene.plot.l, scene.plot.b - scene.plot.t);
+        ctx.clip();
+      } else ctx.restore();
+    }
+    if (p.k === "text") {
+      ctx.font = p.size + "px " + scene.font;
+      ctx.textAlign = { start: "left", middle: "center", end: "right" }[p.anchor];
+      ctx.textBaseline = "alphabetic";
+      ctx.fillStyle = p.color;
+      ctx.fillText(p.text, p.x, p.y);
+      continue;
+    }
+    ctx.globalAlpha = p.alpha;
+    ctx.beginPath();
+    p.pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+    if (p.k === "poly") {
+      ctx.fillStyle = p.color;
+      ctx.fill();
+    } else {
+      ctx.strokeStyle = p.color;
+      ctx.lineWidth = p.width;
+      ctx.setLineDash(p.dash);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.globalAlpha = 1;
+  }
+  if (clipped) ctx.restore();
+}
+
+/* ---------- on-screen charts ---------- */
 function drawChart(chart) {
   const canvas = chart.canvas;
   const rect = canvas.getBoundingClientRect();
@@ -494,70 +926,22 @@ function drawChart(chart) {
     canvas.width = Math.round(W * ratio);
     canvas.height = Math.round(H * ratio);
   }
+  const key = [state.version, state.logy, state.zoom, W, H].join("/");
+  if (chart.key !== key) {
+    chart.key = key;
+    chart.list = seriesFor(chart.metric);
+    const flags = flagsFor(chart.metric);
+    chart.scene = buildScene(chart.metric, chart.list, flags, { W, H, theme: screenTheme(), font: "system-ui, sans-serif", size: 11 });
+    renderFlagList(chart, flags);
+  }
   const ctx = canvas.getContext("2d");
   ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   ctx.clearRect(0, 0, W, H);
+  const scene = chart.scene;
+  if (!scene) return;
+  paintCanvas(ctx, scene);
 
-  const list = seriesFor(chart.metric);
-  chart.list = list;
-  let x0 = Infinity, x1 = -Infinity;
-  for (const s of list) if (s.xs.length) { x0 = Math.min(x0, s.xs[0]); x1 = Math.max(x1, s.xs[s.xs.length - 1]); }
-  if (x0 === Infinity) return;
-  if (state.zoom) [x0, x1] = state.zoom;
-  if (x0 === x1) { x0 -= 1; x1 += 1; }
-
-  const logY = state.logy;
-  const usable = v => Number.isFinite(v) && (!logY || v > 0);
-  let lo = Infinity, hi = -Infinity;
-  for (const s of list) {
-    const ys = state.smooth ? s.ys : s.raw;
-    const a = lowerBound(s.xs, x0), b = lowerBound(s.xs, x1 + 1e-12);
-    for (let i = a; i < b; i++) if (usable(ys[i])) { if (ys[i] < lo) lo = ys[i]; if (ys[i] > hi) hi = ys[i]; }
-  }
-  if (lo === Infinity) { lo = logY ? 0.1 : 0; hi = logY ? 1 : 1; }
-  const tf = v => logY ? (v > 0 ? Math.log10(v) : NaN) : v;
-  let t0 = tf(lo), t1 = tf(hi);
-  if (t0 === t1) { t0 -= Math.abs(t0) * 0.1 || 1; t1 += Math.abs(t1) * 0.1 || 1; }
-  const pad = (t1 - t0) * 0.06;
-  t0 -= pad; t1 += pad;
-
-  const yTicks = logY
-    ? niceTicks(t0, t1, 4).filter(Number.isInteger).map(v => ({ at: v, text: fmt(10 ** v) }))
-    : niceTicks(t0, t1, 5).map(v => ({ at: v, text: fmt(v) }));
-  ctx.font = "11px system-ui, sans-serif";
-  const left = Math.ceil(Math.max(28, ...yTicks.map(t => ctx.measureText(t.text).width)) + 10);
-  const plot = { l: left, r: W - 12, t: 6, b: H - 22 };
-  const px = x => plot.l + (x - x0) / (x1 - x0) * (plot.r - plot.l);
-  const py = t => plot.b - (t - t0) / (t1 - t0) * (plot.b - plot.t);
-  const y = v => py(tf(v));
-  Object.assign(chart, { plot, px, x0, x1, invert: p => x0 + (p - plot.l) / (plot.r - plot.l) * (x1 - x0) });
-
-  ctx.lineWidth = 1;
-  ctx.fillStyle = ink["text-3"];
-  ctx.textBaseline = "middle";
-  ctx.textAlign = "right";
-  for (const tick of yTicks) {
-    const at = Math.round(py(tick.at)) + 0.5;
-    ctx.strokeStyle = ink.grid;
-    ctx.beginPath(); ctx.moveTo(plot.l, at); ctx.lineTo(plot.r, at); ctx.stroke();
-    ctx.fillText(tick.text, plot.l - 6, at);
-  }
-  ctx.textAlign = "center";
-  ctx.textBaseline = "top";
-  const xTicks = niceTicks(x0, x1, Math.max(2, Math.floor((plot.r - plot.l) / 90)));
-  for (const tick of xTicks) ctx.fillText(fmtX(tick), px(tick), plot.b + 7);
-  ctx.strokeStyle = ink.line;
-  ctx.beginPath(); ctx.moveTo(plot.l, plot.b + 0.5); ctx.lineTo(plot.r, plot.b + 0.5); ctx.stroke();
-
-  ctx.save();
-  ctx.beginPath(); ctx.rect(plot.l, 0, plot.r - plot.l, plot.b); ctx.clip();
-  const view = { x0, x1, y, px };
-  for (const s of list) {
-    if (state.smooth) drawLine(ctx, s, s.raw, view, W, 0.2, 1);
-    drawLine(ctx, s, s.ys, view, W, 1, 2);
-  }
-  ctx.restore();
-
+  const { plot } = scene;
   if (chart.drag) {
     const a = Math.max(plot.l, Math.min(chart.drag.from, chart.drag.to));
     const b = Math.min(plot.r, Math.max(chart.drag.from, chart.drag.to));
@@ -568,31 +952,29 @@ function drawChart(chart) {
   }
   if (chart.hoverX !== undefined) {
     ctx.strokeStyle = ink["text-3"];
-    const at = Math.round(px(chart.hoverX)) + 0.5;
+    ctx.lineWidth = 1;
+    const at = Math.round(scene.px(chart.hoverX)) + 0.5;
     ctx.beginPath(); ctx.moveTo(at, plot.t); ctx.lineTo(at, plot.b); ctx.stroke();
-    for (const s of list) {
+    for (const s of chart.list) {
       const i = nearest(s.xs, chart.hoverX);
-      const v = y(s.ys[i]);
-      if (i < 0 || !Number.isFinite(v) || Math.abs(s.xs[i] - chart.hoverX) > (x1 - x0) * 0.05) continue;
+      if (i < 0 || Math.abs(s.xs[i] - chart.hoverX) > (scene.x1 - scene.x0) * 0.05) continue;
+      const v = scene.y(s.ys[i]);
+      if (!Number.isFinite(v)) continue;
       ctx.fillStyle = colorOf(s.slot);
       ctx.strokeStyle = ink.surface;
       ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.arc(px(s.xs[i]), v, 4, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(scene.px(s.xs[i]), v, 4, 0, 7); ctx.fill(); ctx.stroke();
     }
   }
 }
-function nearest(xs, x) {
-  if (!xs.length) return -1;
-  const i = Math.min(lowerBound(xs, x), xs.length - 1);
-  return i > 0 && x - xs[i - 1] < xs[i] - x ? i - 1 : i;
-}
 function showTip(chart, event) {
   const tip = $("tip");
-  if (!chart.list || !chart.list.length || !chart.plot) return;
+  const scene = chart.scene;
+  if (!scene || !chart.list.length) return;
   const rect = chart.canvas.getBoundingClientRect();
   const pointer = event.clientX - rect.left;
-  if (pointer < chart.plot.l || pointer > chart.plot.r) return hideTip(chart);
-  const target = chart.invert(pointer);
+  if (pointer < scene.plot.l || pointer > scene.plot.r) return hideTip(chart);
+  const target = scene.invertX(pointer);
   let snapped = null;
   for (const s of chart.list) {
     const i = nearest(s.xs, target);
@@ -602,9 +984,10 @@ function showTip(chart, event) {
   tip.replaceChildren(el("div", "head", (state.xaxis === "time" ? "Time " : "Step ") + fmtX(snapped)));
   for (const s of chart.list) {
     const i = nearest(s.xs, snapped);
-    if (i < 0 || Math.abs(s.xs[i] - snapped) > (chart.x1 - chart.x0) * 0.05) continue;
+    if (i < 0 || Math.abs(s.xs[i] - snapped) > (scene.x1 - scene.x0) * 0.05) continue;
     const row = el("div", "tiprow");
-    row.append(lineKey(s.slot), el("strong", "", fmt(s.ys[i])), el("span", "label", labelOf(s.exp)));
+    const value = s.std ? fmt(s.ys[i]) + " ± " + fmt(s.std[i]) : fmt(s.ys[i]);
+    row.append(lineKey(s.slot), el("strong", "", value), el("span", "label", s.label));
     tip.append(row);
   }
   tip.style.display = "block";
@@ -624,14 +1007,126 @@ function setZoom(zoom) {
   $("reset").hidden = !zoom;
   drawAll();
 }
+function renderFlagList(chart, flags) {
+  const box = chart.flagList;
+  box.replaceChildren();
+  for (const flag of flags) {
+    const row = el("div", "flagrow");
+    const head = el("div", "flaghead");
+    const remove = el("button", "link", "Remove");
+    remove.setAttribute("aria-label", "Remove flag " + flagText(flag));
+    remove.onclick = () => removeFlag(flag);
+    head.append(el("strong", "", "⚑ " + flagText(flag)));
+    if (!EXPORT) head.append(remove);
+    row.append(head);
+    for (const s of chart.list) {
+      if (!flag.groups.has(s.group)) continue;
+      const result = checkFlag(flag, s);
+      const words = {
+        met: "✓ reached at step " + fmtStep(result.step),
+        missed: "✗ missed, " + fmt(result.value) + " at step " + fmtStep(flag.step),
+        pending: "… not yet, at step " + fmtStep(result.step),
+      }[result.state];
+      const item = el("div", "flagitem " + result.state);
+      item.append(lineKey(s.slot), el("span", "label", s.label), el("span", "verdict", words));
+      row.append(item);
+    }
+    box.append(row);
+  }
+}
+function makeFlagForm(chart) {
+  const form = el("form", "flagform");
+  form.hidden = true;
+  const direction = el("select");
+  direction.setAttribute("aria-label", "Direction");
+  for (const value of ["below", "above"]) {
+    const option = el("option", "", value);
+    option.value = value;
+    direction.append(option);
+  }
+  const number = (label, step) => {
+    const input = el("input");
+    input.type = "number"; input.step = step; input.required = true;
+    input.setAttribute("aria-label", label);
+    return input;
+  };
+  const value = number("Value", "any");
+  const step = number("Step", "1");
+  step.min = 0;
+  const add = el("button", "", "Add");
+  add.type = "submit";
+  const cancel = el("button", "link", "Cancel");
+  cancel.type = "button";
+  cancel.onclick = () => { form.hidden = true; };
+  form.append(el("span", "", "Should go"), direction, value, el("span", "", "by step"), step, add, cancel,
+    el("span", "hint", "Click the chart to fill these in."));
+  form.onsubmit = event => {
+    event.preventDefault();
+    form.hidden = true;
+    addFlag({ metric: chart.metric, direction: direction.value, value: +value.value, step: +step.value });
+  };
+  chart.fillFlag = (x, y) => {
+    value.value = Number(y.toPrecision(3));
+    step.value = Math.max(0, Math.round(x));
+  };
+  return form;
+}
+function makeSectionForm(chart) {
+  const form = el("form", "flagform");
+  form.hidden = true;
+  const name = el("input", "sectionname");
+  name.setAttribute("list", "sections");
+  name.setAttribute("aria-label", "Section for " + chart.metric);
+  const move = el("button", "", "Move");
+  move.type = "submit";
+  const cancel = el("button", "link", "Cancel");
+  cancel.type = "button";
+  cancel.onclick = () => { form.hidden = true; };
+  form.append(el("span", "", "Show under"), name, move, cancel,
+    el("span", "hint", "Leave this empty to use the part of the name before the first slash."));
+  form.onsubmit = event => {
+    event.preventDefault();
+    form.hidden = true;
+    const section = name.value.trim();
+    changeLayout(layout => {
+      if (section) layout.sections[chart.metric] = section;
+      else delete layout.sections[chart.metric];
+    });
+  };
+  chart.toggleSection = () => {
+    form.hidden = !form.hidden;
+    if (form.hidden) return;
+    name.value = chosenSection(chart.metric);
+    name.focus();
+  };
+  return form;
+}
 function makeChart(metric) {
   const card = el("section", "chart");
-  card.append(el("h3", "", metric));
+  const head = el("div", "charthead");
+  head.append(el("h3", "", metric));
+  const tools = el("div", "tools");
   const canvas = el("canvas");
   canvas.setAttribute("role", "img");
   canvas.setAttribute("aria-label", "Line chart of " + metric + ". The Table tab lists the latest values.");
-  card.append(canvas);
-  const chart = { metric, card, canvas };
+  const chart = { metric, card, canvas, flagList: el("div", "flaglist") };
+  const form = makeFlagForm(chart);
+  const sectionForm = makeSectionForm(chart);
+  const tool = (label, action) => {
+    const button = el("button", "tool", label);
+    button.onclick = action;
+    tools.append(button);
+    return button;
+  };
+  if (!EXPORT) {
+    chart.pinTool = tool("Pin", () => togglePin(metric));
+    tool("Section", chart.toggleSection);
+    tool("Flag", () => { form.hidden = !form.hidden; });
+  }
+  for (const kind of Object.keys(EXPORTS)) tool(kind, () => EXPORTS[kind](chart));
+  head.append(tools);
+  card.append(head, form, sectionForm, canvas, chart.flagList);
+
   const local = event => event.clientX - canvas.getBoundingClientRect().left;
   canvas.onpointerdown = event => {
     canvas.setPointerCapture(event.pointerId);
@@ -641,14 +1136,20 @@ function makeChart(metric) {
     if (chart.drag) { chart.drag.to = local(event); $("tip").style.display = "none"; chart.hoverX = undefined; drawChart(chart); }
     else showTip(chart, event);
   };
-  canvas.onpointerup = () => {
+  canvas.onpointerup = event => {
     const drag = chart.drag;
     chart.drag = undefined;
-    if (drag && Math.abs(drag.to - drag.from) > 6 && chart.plot) {
-      const a = chart.invert(Math.max(chart.plot.l, Math.min(drag.from, drag.to)));
-      const b = chart.invert(Math.min(chart.plot.r, Math.max(drag.from, drag.to)));
+    const scene = chart.scene;
+    if (drag && scene && Math.abs(drag.to - drag.from) > 6) {
+      const a = scene.invertX(Math.max(scene.plot.l, Math.min(drag.from, drag.to)));
+      const b = scene.invertX(Math.min(scene.plot.r, Math.max(drag.from, drag.to)));
       setZoom([a, b]);
-    } else drawChart(chart);
+    } else {
+      if (drag && scene && !form.hidden && state.xaxis === "step") {
+        chart.fillFlag(scene.invertX(drag.to), scene.invertY(event.clientY - canvas.getBoundingClientRect().top));
+      }
+      drawChart(chart);
+    }
   };
   canvas.onpointerleave = () => hideTip(chart);
   canvas.ondblclick = () => setZoom(null);
@@ -656,13 +1157,209 @@ function makeChart(metric) {
 }
 function drawAll() { for (const chart of charts.values()) drawChart(chart); }
 
+/* ---------- exports ---------- */
+const PAPER = {
+  surface: "#ffffff", grid: "#e6e5e1", line: "#8f8e88", text: "#0b0b0b", "text-2": "#3f3e3b", "text-3": "#52514e",
+  series: ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"],
+};
+const paperScene = chart => buildScene(chart.metric, seriesFor(chart.metric), flagsFor(chart.metric), {
+  W: 640, H: 420, theme: PAPER, font: "Arial, Helvetica, sans-serif", size: 12, title: true, legend: true,
+});
+const fileStem = metric => metric.replace(/[^\w.-]+/g, "-").replace(/^-+|-+$/g, "") || "chart";
+function download(blob, name) {
+  const link = el("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 10000);
+}
+const xml = text => String(text).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const round2 = v => Math.round(v * 100) / 100;
+function toSVG(scene) {
+  const { W, H, plot } = scene;
+  const out = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" font-family="Arial, Helvetica, sans-serif">`,
+    `<defs><clipPath id="plot"><rect x="${plot.l}" y="${plot.t}" width="${plot.r - plot.l}" height="${plot.b - plot.t}"/></clipPath></defs>`,
+    `<rect width="${W}" height="${H}" fill="${PAPER.surface}"/>`];
+  for (const p of scene.prims) {
+    const clip = p.clip ? ' clip-path="url(#plot)"' : "";
+    if (p.k === "text") {
+      out.push(`<text x="${round2(p.x)}" y="${round2(p.y)}" font-size="${p.size}" fill="${p.color}" text-anchor="${p.anchor}"${clip}>${xml(p.text)}</text>`);
+      continue;
+    }
+    const points = p.pts.map(([x, y]) => round2(x) + "," + round2(y)).join(" ");
+    if (p.k === "poly") out.push(`<polygon points="${points}" fill="${p.color}" fill-opacity="${p.alpha}"${clip}/>`);
+    else {
+      const dash = p.dash.length ? ` stroke-dasharray="${p.dash.join(" ")}"` : "";
+      out.push(`<polyline points="${points}" fill="none" stroke="${p.color}" stroke-width="${p.width}" stroke-opacity="${p.alpha}" stroke-linejoin="round"${dash}${clip}/>`);
+    }
+  }
+  out.push("</svg>");
+  return out.join("\n");
+}
+// A small vector PDF writer, so pdflatex can include charts without a library.
+function toPDF(scene) {
+  const { W, H, plot } = scene;
+  const rgb = hex => [1, 3, 5].map(i => (parseInt(hex.slice(i, i + 2), 16) / 255).toFixed(3)).join(" ");
+  const n = v => round2(v);
+  const flip = y => n(H - y);
+  const alphas = new Map();
+  const gs = alpha => {
+    if (!alphas.has(alpha)) alphas.set(alpha, "G" + alphas.size);
+    return "/" + alphas.get(alpha) + " gs";
+  };
+  const pdfText = text => [...text].map(c => {
+    const code = c.charCodeAt(0);
+    if (c === "(" || c === ")" || c === "\\") return "\\" + c;
+    return code >= 32 && code <= 255 ? c : "?";   // the built-in font is Latin-1 only
+  }).join("");
+  const body = [`${rgb(PAPER.surface)} rg 0 0 ${W} ${H} re f`];
+  let clipped = false;
+  for (const p of scene.prims) {
+    if (!!p.clip !== clipped) {
+      clipped = !clipped;
+      body.push(clipped ? `q ${n(plot.l)} ${flip(plot.b)} ${n(plot.r - plot.l)} ${n(plot.b - plot.t)} re W n` : "Q");
+    }
+    if (p.k === "text") {
+      const width = textWidth(p.text, p.size, scene.font);
+      const shift = p.anchor === "end" ? width : p.anchor === "middle" ? width / 2 : 0;
+      body.push(`${rgb(p.color)} rg BT /F1 ${p.size} Tf ${n(p.x - shift)} ${flip(p.y)} Td (${pdfText(p.text)}) Tj ET`);
+      continue;
+    }
+    const path = p.pts.map(([x, y], i) => `${n(x)} ${flip(y)} ${i ? "l" : "m"}`).join(" ");
+    if (p.k === "poly") body.push(`q ${gs(p.alpha)} ${rgb(p.color)} rg ${path} h f Q`);
+    else body.push(`q ${gs(p.alpha)} ${rgb(p.color)} RG ${p.width} w 1 j [${p.dash.join(" ")}] 0 d ${path} S Q`);
+  }
+  if (clipped) body.push("Q");
+  const stream = body.join("\n");
+  const states = [...alphas].map(([alpha, name]) => `/${name} << /CA ${alpha} /ca ${alpha} >>`).join(" ");
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+    `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> /ExtGState << ${states} >> >> >>`,
+    `<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`,
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>",
+  ];
+  let file = "%PDF-1.4\n";
+  const offsets = objects.map((object, i) => {
+    const at = file.length;
+    file += `${i + 1} 0 obj\n${object}\nendobj\n`;
+    return at;
+  });
+  const start = file.length;
+  file += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  for (const at of offsets) file += String(at).padStart(10, "0") + " 00000 n \n";
+  file += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${start}\n%%EOF\n`;
+  return Uint8Array.from(file, c => c.charCodeAt(0));
+}
+function toCSV(chart) {
+  const quote = v => /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+  const aggregated = seriesFor(chart.metric).some(s => s.std);
+  const rows = [aggregated ? "experiment,step,mean,std,seeds" : "experiment,step,value"];
+  for (const s of seriesFor(chart.metric)) {
+    for (let i = 0; i < s.ys.length; i++) {
+      const cells = [quote(s.label), s.steps[i], s.ys[i]];
+      if (aggregated) cells.push(s.std ? s.std[i] : 0, s.n ? s.n[i] : 1);
+      rows.push(cells.join(","));
+    }
+  }
+  return rows.join("\n") + "\n";
+}
+const latexEscape = text => String(text).replace(/[\\{}$&#%_^~]/g, c => ({
+  "\\": "\\textbackslash{}", "^": "\\textasciicircum{}", "~": "\\textasciitilde{}",
+}[c] ?? "\\" + c));
+// A pgfplots figure with its data inline, so it needs no extra file. Points are
+// thinned because pdflatex runs out of memory on long coordinate lists.
+function toLatex(chart) {
+  const LATEX_COLUMNS = 150;
+  const list = seriesFor(chart.metric);
+  const flags = flagsFor(chart.metric);
+  const { x0, x1, usable } = plotRange(list, flags);
+  const num = v => Number(v.toPrecision(6));
+  const coords = pts => pts.map(([x, y]) => `(${num(x)},${y === null ? "nan" : num(y)})`).join(" ");
+  const out = [
+    "% Needs in your preamble: \\usepackage{pgfplots} \\pgfplotsset{compat=1.18}",
+    "\\begin{figure}[t]",
+    "  \\centering",
+  ];
+  const used = [...new Set(list.map(s => s.slot % SLOTS))];
+  for (const slot of used) out.push(`  \\definecolor{alag${slot + 1}}{HTML}{${PAPER.series[slot].slice(1).toUpperCase()}}`);
+  out.push("  \\begin{tikzpicture}", "    \\begin{axis}[");
+  const options = [
+    "width=\\linewidth", "height=0.62\\linewidth",
+    `xlabel={${state.xaxis === "time" ? "Time (s)" : "Step"}}`, `ylabel={${latexEscape(chart.metric)}}`,
+    "grid=major", "grid style={gray!20}", "unbounded coords=jump", "no markers",
+    "legend style={at={(0.5,1.03)},anchor=south,legend columns=-1,draw=none,font=\\footnotesize,/tikz/every even column/.append style={column sep=6pt}}",
+  ];
+  if (state.logy) options.push("ymode=log");
+  if (state.zoom) options.push(`xmin=${num(x0)}`, `xmax=${num(x1)}`);
+  out.push(options.map(option => "      " + option).join(",\n"), "    ]");
+  for (const s of list) {
+    const color = "alag" + (s.slot % SLOTS + 1);
+    const shown = pick(s.xs, s.ys, x0, x1, LATEX_COLUMNS, usable);
+    if (s.lo) {
+      const kept = shown.filter(i => i >= 0 && usable(s.lo[i]));
+      const band = kept.map(i => [s.xs[i], s.hi[i]]).concat(kept.slice().reverse().map(i => [s.xs[i], s.lo[i]]));
+      out.push(`    \\addplot[draw=none, fill=${color}, fill opacity=0.18, forget plot] coordinates {${coords(band)}};`);
+    }
+    const dash = [", ", ", densely dashed", ", densely dotted"][Math.floor(s.slot / SLOTS) % 3].replace(/^, $/, "");
+    const pts = shown.map(i => i < 0 ? [s.xs[0], null] : [s.xs[i], s.ys[i]]);
+    out.push(`    \\addplot[${color}, thick${dash}] coordinates {${coords(pts)}};`);
+    if (list.length > 1) out.push(`    \\addlegendentry{${latexEscape(s.label)}}`);
+  }
+  for (const flag of flags) {
+    if (state.xaxis !== "step" || !usable(flag.value)) continue;
+    out.push(`    \\addplot[black, densely dashed, forget plot] coordinates {(${num(x0)},${num(flag.value)}) (${num(flag.step)},${num(flag.value)})};`);
+    out.push(`    \\node[font=\\scriptsize, anchor=south west] at (axis cs:${num(flag.step)},${num(flag.value)}) {${latexEscape(flagText(flag))}};`);
+  }
+  const label = fileStem(chart.metric).toLowerCase();
+  out.push("    \\end{axis}", "  \\end{tikzpicture}",
+    `  \\caption{${latexEscape(chart.metric)}}`, `  \\label{fig:${label}}`, "\\end{figure}");
+  return out.join("\n") + "\n";
+}
+function showLatex(chart) {
+  const dialog = $("latex");
+  $("latexcode").value = toLatex(chart);
+  $("copied").textContent = "";
+  dialog.showModal();
+  $("latexcode").select();
+}
+const EXPORTS = {
+  SVG: chart => download(new Blob([toSVG(paperScene(chart))], { type: "image/svg+xml" }), fileStem(chart.metric) + ".svg"),
+  PNG: chart => {
+    const scene = paperScene(chart), scale = 3;
+    const canvas = el("canvas");
+    canvas.width = scene.W * scale;
+    canvas.height = scene.H * scale;
+    const ctx = canvas.getContext("2d");
+    ctx.scale(scale, scale);
+    ctx.fillStyle = PAPER.surface;
+    ctx.fillRect(0, 0, scene.W, scene.H);
+    paintCanvas(ctx, scene);
+    canvas.toBlob(blob => download(blob, fileStem(chart.metric) + ".png"));
+  },
+  PDF: chart => download(new Blob([toPDF(paperScene(chart))], { type: "application/pdf" }), fileStem(chart.metric) + ".pdf"),
+  CSV: chart => download(new Blob([toCSV(chart)], { type: "text/csv" }), fileStem(chart.metric) + ".csv"),
+  LaTeX: showLatex,
+};
+
 function renderCharts() {
   const content = $("content");
   const metrics = new Set();
   const list = selectedExperiments();
   for (const { exp } of list) for (const name of exp.series.keys()) metrics.add(name);
   const names = [...metrics].sort();
-  const signature = names.join("\n");
+  const sections = new Map();
+  for (const name of names) {
+    if (isPinned(name)) continue;
+    const section = sectionOf(name);
+    if (!sections.has(section)) sections.set(section, []);
+    sections.get(section).push(name);
+  }
+  const order = [...sections.keys()].sort((a, b) => !a - !b || a.localeCompare(b));   // "Other" goes last
+  const blocks = order.map(section => [section || "Other", sections.get(section)]);
+  const pinned = names.filter(isPinned);
+  if (pinned.length) blocks.unshift(["Pinned", pinned]);
+  const signature = JSON.stringify(blocks);
 
   if (signature !== renderCharts.signature || !content.querySelector(".charts")) {
     renderCharts.signature = signature;
@@ -672,19 +1369,18 @@ function renderCharts() {
       charts.clear();
       return;
     }
-    const sections = new Map();
-    for (const name of names) {
-      const slash = name.indexOf("/");
-      const section = slash > 0 ? name.slice(0, slash) : "";
-      if (!sections.has(section)) sections.set(section, []);
-      sections.get(section).push(name);
-    }
-    for (const [section, members] of sections) {
-      if (sections.size > 1 || section) content.append(el("h2", "", section || "Other"));
+    $("sections").replaceChildren(...order.filter(Boolean).map(section => {
+      const option = el("option");
+      option.value = section;
+      return option;
+    }));
+    for (const [heading, members] of blocks) {
+      if (blocks.length > 1 || heading !== "Other") content.append(el("h2", "", heading));
       const grid = el("div", "charts");
       for (const name of members) {
         const chart = charts.get(name) ?? makeChart(name);
         charts.set(name, chart);
+        if (chart.pinTool) chart.pinTool.textContent = isPinned(name) ? "Unpin" : "Pin";
         grid.append(chart.card);
       }
       content.append(grid);
@@ -709,7 +1405,8 @@ function renderImages() {
     content.append(el("div", "empty", list.length ? "No images logged yet." : "Select experiments on the left to compare them."));
     return;
   }
-  for (const name of [...names.keys()].sort()) {
+  const ordered = [...names.keys()].sort().sort((a, b) => isPinned(b) - isPinned(a));
+  for (const name of ordered) {
     const entries = names.get(name);
     const steps = [...new Set(entries.map(item => item.image.step))].sort((a, b) => a - b);
     state.imageStep ??= {};
@@ -717,7 +1414,14 @@ function renderImages() {
     const index = follow ? steps.length - 1 : Math.min(state.imageStep[name], steps.length - 1);
     const step = steps[index];
 
-    content.append(el("h2", "", name));
+    const heading = el("h2", "imagehead", name);
+    if (!EXPORT) {
+      const pin = el("button", "tool", isPinned(name) ? "Unpin" : "Pin");
+      pin.setAttribute("aria-label", (isPinned(name) ? "Unpin " : "Pin ") + name);
+      pin.onclick = () => togglePin(name);
+      heading.append(pin);
+    }
+    content.append(heading);
     const scrub = el("div", "scrub");
     const slider = el("input");
     slider.type = "range"; slider.min = 0; slider.max = steps.length - 1; slider.value = index;
@@ -740,7 +1444,7 @@ function renderImages() {
         const img = el("img");
         img.loading = "lazy";
         img.alt = name + " at step " + image.step + " from " + labelOf(exp);
-        img.src = "/file?" + query(exp) + "&p=" + encodeURIComponent(image.path);
+        img.src = image.data ?? "/file?" + query(exp) + "&p=" + encodeURIComponent(image.path);
         figure.append(caption, img);
         grid.append(figure);
       }
@@ -764,19 +1468,19 @@ function flatten(value, prefix, out) {
   } else out[prefix] = typeof value === "string" ? value : JSON.stringify(value);
   return out;
 }
-function makeTable(title, list, rows) {
+function makeTable(title, headers, rows) {
   const content = $("content");
   content.append(el("h2", "", title));
   const wrap = el("div", "tablewrap");
   const table = el("table");
   const head = el("tr");
   head.append(el("th", "", ""));
-  for (const { exp } of list) head.append(el("th", "", labelOf(exp)));
+  for (const header of headers) head.append(el("th", "", header));
   const thead = el("thead");
   thead.append(head);
   const body = el("tbody");
   for (const row of rows) {
-    const tr = el("tr", row.differs ? "differs" : "");
+    const tr = el("tr");
     tr.append(el("td", "", row.name));
     for (const cell of row.cells) tr.append(el("td", "num", cell));
     body.append(tr);
@@ -794,22 +1498,161 @@ function renderTable() {
     content.append(el("div", "empty", "Select experiments on the left to compare them."));
     return;
   }
-  const configs = list.map(({ exp }) => flatten(exp.config ?? {}, "", {}));
-  const keys = [...new Set(configs.flatMap(Object.keys))].filter(Boolean).sort();
-  const configRows = keys.map(name => {
-    const cells = configs.map(config => config[name] ?? "–");
-    return { name, cells, differs: new Set(cells).size > 1 };
-  }).sort((a, b) => b.differs - a.differs);
-  if (configRows.length) makeTable("Config (settings that differ come first, in bold)", list, configRows);
-
+  const items = displayItems();
   const metrics = [...new Set(list.flatMap(({ exp }) => [...exp.series.keys()]))].sort();
-  const last = (exp, name) => {
-    const ys = exp.series.get(name)?.y ?? [];
-    for (let i = ys.length - 1; i >= 0; i--) if (Number.isFinite(ys[i])) return fmt(ys[i]);
+  const latest = (item, metric) => {
+    const s = seriesFor(metric).find(series => series.id === item.id);
+    const ys = s ? s.raw ?? s.ys : [];
+    for (let i = ys.length - 1; i >= 0; i--) {
+      if (Number.isFinite(ys[i])) return s.std ? fmt(ys[i]) + " ± " + fmt(s.std[i]) : fmt(ys[i]);
+    }
     return "–";
   };
-  if (metrics.length) makeTable("Latest values", list, metrics.map(name => ({ name, cells: list.map(({ exp }) => last(exp, name)) })));
+  if (metrics.length) makeTable("Latest values", items.map(item => item.label), metrics.map(name => ({ name, cells: items.map(item => latest(item, name)) })));
+  else content.append(el("div", "empty", "No scalars logged yet."));
   $("main").scrollTop = scroll;
+}
+
+/* ---------- hyperparameters ---------- */
+function compareCells(a, b) {
+  const x = Number(a), y = Number(b);
+  if (a !== "" && b !== "" && !Number.isNaN(x) && !Number.isNaN(y)) return x - y;
+  return a.localeCompare(b, undefined, { numeric: true });
+}
+function renderHyper() {
+  const content = $("content");
+  const list = selectedExperiments();
+  const rows = list.map(({ exp, slot }) => ({ exp, slot, config: flatten(exp.config ?? {}, "", {}) }));
+  const keys = [...new Set(rows.flatMap(row => Object.keys(row.config)))].filter(Boolean).sort();
+  const varies = new Set(keys.filter(key => new Set(rows.map(row => row.config[key])).size > 1));
+  const columns = keys.filter(key => varies.has(key));
+  if (!state.hyperDiffOnly) columns.push(...keys.filter(key => !varies.has(key)));
+
+  const sort = state.hyperSort;
+  if (sort && columns.includes(sort.key)) {
+    rows.sort((a, b) => {
+      const x = a.config[sort.key], y = b.config[sort.key];
+      if (x === undefined || y === undefined) return (x === undefined) - (y === undefined);   // blanks stay last
+      return sort.direction * compareCells(x, y);
+    });
+  }
+
+  // Polling redraws often during training, and rebuilding would lose the scroll position.
+  const signature = JSON.stringify([rows.map(row => [row.exp.id, row.slot, row.config]), columns, sort, state.hyperDiffOnly]);
+  if (signature === renderHyper.signature) return;
+  renderHyper.signature = signature;
+
+  const focused = document.activeElement?.dataset?.focus;
+  const scrollX = content.querySelector(".tablewrap")?.scrollLeft ?? 0;
+  content.replaceChildren();
+  if (!list.length) {
+    content.append(el("div", "empty", "Select experiments on the left to compare them."));
+    return;
+  }
+  if (!keys.length) {
+    content.append(el("div", "empty", "No hyperparameters logged yet. Pass config={...} to ALAG."));
+    return;
+  }
+
+  const head = el("div", "hyperhead");
+  head.append(el("h2", "", "Hyperparameters"));
+  const filter = el("label", "control");
+  const only = el("input");
+  only.type = "checkbox";
+  only.checked = state.hyperDiffOnly;
+  only.dataset.focus = "only";
+  only.onchange = () => {
+    state.hyperDiffOnly = only.checked;
+    save("alag.hyperDiffOnly", only.checked);
+    renderHyper();
+  };
+  filter.append(only, document.createTextNode("Only settings that differ"));
+  head.append(filter);
+  content.append(head);
+  if (!columns.length) {
+    content.append(el("div", "empty", "Every setting is the same in the selected experiments."));
+    return;
+  }
+
+  const table = el("table", "hyper");
+  const titles = el("tr");
+  titles.append(el("th", "", "Experiment"));
+  for (const key of columns) {
+    const th = el("th", varies.has(key) ? "varies" : "");
+    th.scope = "col";
+    const sorted = sort?.key === key;
+    if (sorted) th.setAttribute("aria-sort", sort.direction > 0 ? "ascending" : "descending");
+    const button = el("button", "sort", key + (sorted ? (sort.direction > 0 ? " ↑" : " ↓") : ""));
+    button.dataset.focus = "sort:" + key;
+    button.onclick = () => {
+      state.hyperSort = { key, direction: sorted ? -sort.direction : 1 };
+      renderHyper();
+    };
+    th.append(button);
+    titles.append(th);
+  }
+  const thead = el("thead");
+  thead.append(titles);
+  const body = el("tbody");
+  for (const { exp, slot, config } of rows) {
+    const tr = el("tr");
+    const name = el("td");
+    name.append(lineKey(slot), document.createTextNode(labelOf(exp)));
+    tr.append(name);
+    for (const key of columns) {
+      const cell = el("td", "num", config[key] ?? "–");
+      if (config[key] !== undefined) cell.title = config[key];
+      tr.append(cell);
+    }
+    body.append(tr);
+  }
+  table.append(thead, body);
+  const wrap = el("div", "tablewrap");
+  wrap.append(table);
+  content.append(wrap);
+  wrap.scrollLeft = scrollX;
+  if (focused) content.querySelector(`[data-focus="${CSS.escape(focused)}"]`)?.focus();
+}
+
+/* ---------- notes ---------- */
+function renderNotes() {
+  const content = $("content");
+  const list = selectedExperiments();
+  content.replaceChildren();
+  if (!list.length) {
+    content.append(el("div", "empty", "Select experiments on the left to add notes and tags."));
+    return;
+  }
+  for (const { exp, slot } of list) {
+    const card = el("section", "notecard");
+    const title = el("h3");
+    title.append(lineKey(slot), document.createTextNode(exp.id));
+    const meta = state.meta.get(exp.id) ?? {};
+    const tags = el("input");
+    tags.value = (meta.tags ?? []).join(", ");
+    tags.placeholder = "baseline, diverged";
+    const note = el("textarea");
+    note.value = meta.note ?? "";
+    tags.readOnly = note.readOnly = !!EXPORT;
+    const tagLabel = el("label", "", "Tags, separated by commas");
+    tagLabel.append(tags);
+    const noteLabel = el("label", "", "Note");
+    noteLabel.append(note);
+    const store = async () => {
+      const next = {
+        ...(state.meta.get(exp.id) ?? {}),
+        tags: [...new Set(tags.value.split(",").map(tag => tag.trim()).filter(Boolean))],
+        note: note.value,
+      };
+      state.meta.set(exp.id, next);
+      await post("/api/meta?" + query(exp), next);
+      renderTree();
+    };
+    tags.onchange = store;
+    note.onchange = store;
+    card.append(title, tagLabel, noteLabel);
+    content.append(card);
+  }
 }
 
 /* ---------- wiring ---------- */
@@ -817,13 +1660,15 @@ function render() {
   renderLegend();
   if (state.tab === "charts") renderCharts();
   else if (state.tab === "images") renderImages();
-  else renderTable();
+  else if (state.tab === "table") renderTable();
+  else if (state.tab === "hyper") renderHyper();
+  else if (!$("content").contains(document.activeElement)) renderNotes();   // don't wipe text being typed
 }
 for (const button of document.querySelectorAll("#tabs button")) {
   button.onclick = () => {
     state.tab = button.dataset.tab;
     for (const other of document.querySelectorAll("#tabs button")) other.setAttribute("aria-selected", other === button);
-    renderCharts.signature = null;
+    renderCharts.signature = renderHyper.signature = null;
     $("content").replaceChildren();
     render();
     poll();
@@ -832,19 +1677,41 @@ for (const button of document.querySelectorAll("#tabs button")) {
 $("filter").oninput = event => { state.filter = event.target.value; renderTree(); };
 $("smooth").oninput = event => {
   state.smooth = +event.target.value;
+  state.version++;
   $("smoothval").textContent = event.target.value;
   drawAll();
 };
-$("xaxis").onchange = event => { state.xaxis = event.target.value; setZoom(null); };
+$("xaxis").onchange = event => { state.xaxis = event.target.value; state.version++; setZoom(null); };
+$("aggregate").onchange = event => {
+  state.aggregate = event.target.checked;
+  if (state.aggregate) { state.xaxis = "step"; $("xaxis").value = "step"; }   // seeds line up by step, not by clock
+  $("xaxis").disabled = state.aggregate;
+  state.version++;
+  render();
+};
+$("copy").onclick = async () => {
+  const code = $("latexcode");
+  try {
+    await navigator.clipboard.writeText(code.value);
+    $("copied").textContent = "Copied";
+  } catch {
+    code.select();
+    $("copied").textContent = "Press Ctrl+C to copy";
+  }
+};
+$("closelatex").onclick = () => $("latex").close();
 $("logy").onchange = event => { state.logy = event.target.checked; drawAll(); };
 $("reset").onclick = () => setZoom(null);
 addEventListener("resize", drawAll);
-matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { readTheme(); renderTree(); render(); });
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { readTheme(); state.version++; renderTree(); render(); });
 
 readTheme();
 render();
 poll();
-setInterval(poll, POLL_MS);
+if (EXPORT) {
+  $("exported").hidden = false;
+  $("exported").textContent = "Read-only export, " + new Date(EXPORT.exported * 1000).toLocaleString();
+} else setInterval(poll, POLL_MS);
 </script>
 </body>
 </html>
