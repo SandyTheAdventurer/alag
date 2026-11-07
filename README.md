@@ -20,6 +20,8 @@ pip install alag
 
 This gives you the `ALAG` class for your training code and the `alag` command for viewing results.
 
+Wheels are built for Linux (x86-64 and ARM, glibc 2.17 or newer) and Windows. On macOS, pip builds ALAG from source, which needs [Rust](https://rustup.rs).
+
 ## Usage
 
 Log from your training code:
@@ -167,6 +169,10 @@ Each chart has **SVG**, **PNG**, **PDF**, **CSV** and **LaTeX** buttons. Exports
 You can still select experiments, zoom, smooth, merge seeds and export charts. It's a read-only snapshot, so it doesn't update, and notes, tags, flags, sections and pins can't be changed.
 
 The file contains everything in the log folder, including every group, config, note and image. To share only part of it, export a folder with just those groups. Runs with many images can make the file large.
+
+## Building wheels
+
+`scripts/build-wheels.sh` builds the source package and every wheel into `dist/`. It needs only Docker.
 
 ## License
 

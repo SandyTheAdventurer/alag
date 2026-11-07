@@ -2,6 +2,9 @@
 name = "alag"
 version = "0.1.0"
 edition = "2021"
+description = "A simple logging and graphing tool for researchers"
+license = "MIT"
+repository = "https://github.com/SandyTheAdventurer/alag"
 
 [[bin]]
 name = "alag"
