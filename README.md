@@ -167,3 +167,7 @@ Each chart has **SVG**, **PNG**, **PDF**, **CSV** and **LaTeX** buttons. Exports
 You can still select experiments, zoom, smooth, merge seeds and export charts. It's a read-only snapshot, so it doesn't update, and notes, tags, flags, sections and pins can't be changed.
 
 The file contains everything in the log folder, including every group, config, note and image. To share only part of it, export a folder with just those groups. Runs with many images can make the file large.
+
+## License
+
+MIT

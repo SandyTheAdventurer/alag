@@ -7,8 +7,24 @@ name = "alag"
 version = "0.1.0"
 description = "A simple logging and graphing tool for researchers"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Sandeep S" }]
 requires-python = ">=3.9"
 dependencies = []
+keywords = ["experiment tracking", "logging", "machine learning", "plotting"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Rust",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+
+[project.urls]
+Repository = "https://github.com/SandyTheAdventurer/alag"
+Issues = "https://github.com/SandyTheAdventurer/alag/issues"
 
 [project.optional-dependencies]
 system = ["psutil"]
