@@ -23,6 +23,7 @@ classifiers = [
 ]
 
 [project.urls]
+Documentation = "https://sandytheadventurer.github.io/alag/"
 Repository = "https://github.com/SandyTheAdventurer/alag"
 Issues = "https://github.com/SandyTheAdventurer/alag/issues"
 

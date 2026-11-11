@@ -544,7 +544,7 @@ function refresh() {
 function fmt(value) {
   if (!Number.isFinite(value)) return String(value);
   const abs = Math.abs(value);
-  if (abs !== 0 && (abs >= 1e6 || abs < 1e-3)) return value.toExponential(2);
+  if (abs !== 0 && (abs >= 1e6 || abs < 1e-3)) return value.toExponential(2).replace(/\.?0+e/, "e");
   return Number(value.toPrecision(4)).toString();
 }
 const fmtStep = step => Number(step).toLocaleString("en-US");
@@ -823,7 +823,10 @@ function buildScene(metric, list, flags, o) {
     text(plot.l - 6, at + size * 0.35, tick.text, theme["text-3"], "end");
   }
   for (const tick of niceTicks(x0, x1, Math.max(2, Math.floor((plot.r - plot.l) / 90)))) {
-    text(px(tick), plot.b + size + 6, fmtX(tick), theme["text-3"], "middle");
+    // The last label can stick out past the card, so it ends at the edge instead.
+    const label = fmtX(tick), half = textWidth(label, size, font) / 2;
+    if (px(tick) + half > W - 2) text(W - 2, plot.b + size + 6, label, theme["text-3"], "end");
+    else text(px(tick), plot.b + size + 6, label, theme["text-3"], "middle");
   }
   line([[plot.l, plot.b + 0.5], [plot.r, plot.b + 0.5]], theme.line, 1);
   if (o.title) text((plot.l + plot.r) / 2, H - 8, state.xaxis === "time" ? "Time" : "Step", theme["text-2"], "middle");

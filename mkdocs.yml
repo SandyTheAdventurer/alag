@@ -1,0 +1,44 @@
+site_name: ALAG
+site_description: A simple logging and graphing tool for researchers
+site_author: Sandeep S
+site_url: https://sandytheadventurer.github.io/alag/
+repo_url: https://github.com/SandyTheAdventurer/alag
+repo_name: SandyTheAdventurer/alag
+edit_uri: edit/main/docs/
+copyright: MIT License, Sandeep S
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      toggle: { icon: material/brightness-4, name: Dark mode }
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      toggle: { icon: material/brightness-7, name: Light mode }
+  features:
+    - content.code.copy
+    - navigation.sections
+    - navigation.footer
+    - search.highlight
+
+nav:
+  - Home: index.md
+  - Logging: logging.md
+  - Viewing: viewing.md
+  - Sharing: sharing.md
+  - Storage: storage.md
+  - Python API: api.md
+  - Development: development.md
+  - Live demo: demo.html
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc: { permalink: true }
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.inlinehilite

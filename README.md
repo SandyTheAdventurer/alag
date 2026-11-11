@@ -2,6 +2,8 @@
 
 **A** simple **L**ogging **A**nd **G**raphing tool, for researchers.
 
+Docs and a live demo: https://sandytheadventurer.github.io/alag/
+
 ## Why
 
 Existing experiment trackers ask for more than a researcher who wants to log a run and look at the results should have to give:
