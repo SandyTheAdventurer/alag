@@ -109,6 +109,10 @@ h2:first-child { margin-top: 4px; }
 .notecard label { display: block; color: var(--text-2); font-size: 12px; margin-top: 6px; }
 .notecard input, .notecard textarea { display: block; width: 100%; margin-top: 2px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 5px 7px; }
 .notecard textarea { min-height: 70px; resize: vertical; }
+.notecard .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; margin-top: 8px; font-size: 12px; color: var(--text-2); }
+.notecard .actions button { border: 1px solid var(--line); background: none; border-radius: 6px; padding: 2px 8px; cursor: pointer; color: var(--text-2); font-size: 12px; }
+.notecard .actions button:disabled { cursor: default; opacity: .6; }
+.notecard .actions button.armed { border-color: var(--s8); color: var(--text); font-weight: 600; }
 #latex { width: min(760px, calc(100vw - 32px)); background: var(--surface); color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 14px; }
 #latex::backdrop { background: #0006; }
 #latex h2 { margin: 0 0 4px; color: var(--text); font-size: 14px; }
@@ -1651,8 +1655,51 @@ function renderNotes() {
     tags.onchange = store;
     note.onchange = store;
     card.append(title, tagLabel, noteLabel);
+    if (!EXPORT) card.append(makeTrashButton(exp));
     content.append(card);
   }
+}
+
+// Moves a finished run to <logdir>/.trash. It takes two clicks, since a run can
+// hold hours of training, and the server keeps the files so it can be undone.
+function makeTrashButton(exp) {
+  const row = el("div", "actions");
+  const button = el("button", "", "Move to trash");
+  const status = el("span", "", "");
+  status.setAttribute("role", "status");
+  const item = state.tree.groups.find(g => g.name === exp.g)?.experiments.find(e => e.name === exp.e);
+  if (item && item.age < LIVE_SECONDS) {
+    button.disabled = true;
+    status.textContent = "Still logging. Runs can be moved to trash once they stop.";
+  }
+  let timer = null;
+  button.onclick = async () => {
+    if (!button.classList.contains("armed")) {
+      button.classList.add("armed");
+      button.textContent = "Click again to move " + exp.e + " to trash";
+      timer = setTimeout(() => { button.classList.remove("armed"); button.textContent = "Move to trash"; }, 4000);
+      return;
+    }
+    clearTimeout(timer);
+    button.disabled = true;
+    const response = await post("/api/trash?" + query(exp), {}).catch(() => null);
+    if (!response?.ok) {
+      button.disabled = false;
+      button.classList.remove("armed");
+      button.textContent = "Move to trash";
+      status.textContent = response?.status === 409
+        ? "Couldn't move it: the run is still logging, or a file in it is open."
+        : "Couldn't move it to trash.";
+      return;
+    }
+    setSelected(exp.id, false);
+    experiments.delete(exp.id);
+    state.meta.delete(exp.id);
+    for (const group of state.tree.groups) group.experiments = group.experiments.filter(e => idOf(group.name, e.name) !== exp.id);
+    refresh();
+  };
+  row.append(button, status);
+  return row;
 }
 
 /* ---------- wiring ---------- */

@@ -18,6 +18,9 @@ const PORT_ATTEMPTS: u16 = 20;
 const MAX_CHUNK: u64 = 16 * 1024 * 1024;
 const MAX_BODY: usize = 1024 * 1024;
 const MAX_HEADERS: u64 = 16 * 1024;
+/// A run whose metrics changed this recently may still be logging, so it can't be trashed.
+const LIVE_SECONDS: u64 = 15;
+const TRASH: &str = ".trash";
 
 const HELP: &str = "Serve ALAG experiments on localhost.
 
@@ -141,7 +144,11 @@ fn handle(mut stream: TcpStream, root: &Path) -> std::io::Result<()> {
         "POST" => {
             let mut body = vec![0; length];
             reader.read_exact(&mut body)?;
-            save(target, root, &body)
+            if target.starts_with("/api/trash?") {
+                trash(target, root)
+            } else {
+                save(target, root, &body)
+            }
         }
         _ => Err(405),
     };
@@ -152,6 +159,7 @@ fn handle(mut stream: TcpStream, root: &Path) -> std::io::Result<()> {
             let status = match code {
                 400 => "400 Bad Request",
                 403 => "403 Forbidden",
+                409 => "409 Conflict",
                 405 => "405 Method Not Allowed",
                 _ => "404 Not Found",
             };
@@ -210,6 +218,35 @@ fn save(target: &str, root: &Path, body: &[u8]) -> Result<Reply, u16> {
     }
     write_atomic(&file, body).map_err(|_| 404u16)?;
     Ok(json("{}".to_string()))
+}
+
+/// Moves an experiment to `<root>/.trash/<group>/`. Nothing is deleted, so a
+/// wrong click can be undone by moving the folder back.
+fn trash(target: &str, root: &Path) -> Result<Reply, u16> {
+    let params = parse_query(target.split_once('?').map_or("", |(_, q)| q));
+    let (group, name) = (find(&params, "g")?, find(&params, "e")?);
+    let dir = resolve(root, group, name)?;
+    match age(&dir.join("metrics.csv")) {
+        None => return Err(404),
+        Some(seconds) if seconds < LIVE_SECONDS => return Err(409),
+        Some(_) => {}
+    }
+    let bin = root.join(TRASH).join(group);
+    fs::create_dir_all(&bin).map_err(|_| 404u16)?;
+    let mut place = bin.join(name);
+    for n in 2.. {
+        if !place.exists() {
+            break;
+        }
+        place = bin.join(format!("{name}-{n}"));
+    }
+    fs::rename(&dir, &place).map_err(|_| 409u16)?;
+    Ok(json("{}".to_string()))
+}
+
+fn age(path: &Path) -> Option<u64> {
+    let modified = fs::metadata(path).ok()?.modified().ok()?;
+    Some(SystemTime::now().duration_since(modified).map_or(0, |d| d.as_secs()))
 }
 
 fn write_atomic(path: &Path, body: &[u8]) -> std::io::Result<()> {
@@ -291,11 +328,7 @@ fn tree(root: &Path, label: &str) -> String {
 
 fn experiment_json(dir: &Path) -> Option<String> {
     let meta = fs::metadata(dir.join("metrics.csv")).ok()?;
-    let age = meta
-        .modified()
-        .ok()
-        .and_then(|t| SystemTime::now().duration_since(t).ok())
-        .map_or(0, |d| d.as_secs());
+    let age = age(&dir.join("metrics.csv"))?;
     Some(format!(
         r#"{{"name":{},"size":{},"age":{age},"meta":{}}}"#,
         quote(&file_name(dir)),
@@ -316,7 +349,7 @@ fn sorted_dirs(path: &Path) -> Vec<PathBuf> {
         .flatten()
         .flatten()
         .map(|entry| entry.path())
-        .filter(|p| p.is_dir())
+        .filter(|p| p.is_dir() && !file_name(p).starts_with('.'))
         .collect();
     dirs.sort();
     dirs
@@ -628,6 +661,34 @@ mod tests {
         assert!(save("/api/layout?g=..", &root, b"{}").is_err());
         assert!(save("/api/layout?g=missing", &root, b"{}").is_err());
         assert!(save("/api/other?g=g", &root, b"{}").is_err());
+        fs::remove_dir_all(&root).unwrap();
+    }
+
+    #[test]
+    fn trash_moves_finished_runs_and_hides_them() {
+        let root = env::temp_dir().join(format!("alag-trash-{}", process::id()));
+        for name in ["old", "live"] {
+            fs::create_dir_all(root.join("g").join(name)).unwrap();
+            fs::write(root.join("g").join(name).join("metrics.csv"), "step,time,metric,value\n").unwrap();
+        }
+        let old = SystemTime::now() - std::time::Duration::from_secs(60);
+        File::options()
+            .write(true)
+            .open(root.join("g/old/metrics.csv"))
+            .unwrap()
+            .set_modified(old)
+            .unwrap();
+
+        assert_eq!(trash("/api/trash?g=g&e=live", &root).err(), Some(409));
+        assert_eq!(trash("/api/trash?g=g&e=missing", &root).err(), Some(404));
+        assert_eq!(trash("/api/trash?g=..&e=old", &root).err(), Some(400));
+        assert!(trash("/api/trash?g=g&e=old", &root).is_ok());
+        assert!(root.join(".trash/g/old/metrics.csv").is_file());
+        assert!(!root.join("g/old").exists());
+
+        let listing = tree(&root, "logs");
+        assert!(listing.contains(r#""name":"live""#));
+        assert!(!listing.contains("old") && !listing.contains(TRASH));
         fs::remove_dir_all(&root).unwrap();
     }
 }

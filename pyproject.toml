@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "alag"
-version = "0.1.0"
+version = "0.1.1"
 description = "A simple logging and graphing tool for researchers"
 readme = "README.md"
 license = "MIT"

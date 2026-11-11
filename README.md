@@ -151,6 +151,12 @@ The flag is drawn on the chart, and each experiment in the group is listed as re
 
 Add these in the **Notes** tab or from Python. Tags appear in the left panel, and the filter box searches names, tags and notes.
 
+### Removing runs
+
+In the **Notes** tab, click **Move to trash** under a run, then click again to confirm. The folder moves to `logs/.trash/<group>/` and disappears from the viewer. To bring a run back, move its folder back into the group. To free the disk space, delete `logs/.trash`.
+
+A run that logged something in the last 15 seconds may still be training, so it can't be moved until it stops.
+
 ### Exporting charts
 
 Each chart has **SVG**, **PNG**, **PDF**, **CSV** and **LaTeX** buttons. Exports use a white background and match the current view, including every selected experiment, smoothing, zoom, log scale and flags.

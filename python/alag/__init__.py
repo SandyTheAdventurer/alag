@@ -3,4 +3,4 @@
 from .logger import ALAG
 
 __all__ = ["ALAG"]
-__version__ = "0.1.0"
+__version__ = "0.1.1"
